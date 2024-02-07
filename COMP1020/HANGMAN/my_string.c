@@ -207,3 +207,25 @@ int my_string_get_size(MY_STRING hMy_string)
   My_string* pString = (My_string*) hMy_string;
   return pString->size;
 }
+
+int my_string_compare(MY_STRING hLeft_string, MY_STRING hRight_string)
+{
+    My_string* pLeftString = (My_string*) hLeft_string;
+    My_string* pRightString = (My_string*) hRight_string;
+
+    int i = 0;
+
+    while (i < my_string_get_size(pLeftString) && i < my_string_get_size(pRightString) && pLeftString->data[i] == pRightString->data[i])
+    {
+        i++;
+    }
+    if (i < my_string_get_size(pLeftString) && i < my_string_get_size(pRightString) && pLeftString->data[i] != pRightString->data[i])
+    {
+        return pLeftString->data[i] - pRightString->data[i];
+    }
+    else if (i == my_string_get_size(pLeftString) && i == my_string_get_size(pRightString))
+    {
+        return 0;
+    }
+    return pLeftString->size - pRightString->size;
+}

@@ -64,4 +64,11 @@ int my_string_get_capacity(MY_STRING hNy_string);
 //Postcondition: Returns a copy of the integer value of the object's size.
 int my_string_get_size(MY_STRING hMy_string);
 
-
+//Precondition: hLeft_string and hRight_string are valid My_string objects.
+//Postcondition: returns an integer less than zero if the string represented
+// by hLeft_string is lexicographically smaller than hRight_string. If
+// one string is a prefix of the other string then the shorter string is
+// considered to be the smaller one. (app is less than apple). Returns
+// 0 if the strings are the same and returns a number greater than zero
+// if the string represented by hLeft_string is bigger than hRight_string.
+int my_string_compare(MY_STRING hLeft_string, MY_STRING hRight_string);

@@ -32,6 +32,8 @@ int main(int argc, char* argv[])
       printf("Found a space after the string\n");
     }
   }
+
+
   my_string_destroy(&hMy_string);
   fclose(fp);
   return 0;
