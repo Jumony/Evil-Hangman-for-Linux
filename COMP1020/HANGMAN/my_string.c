@@ -131,25 +131,10 @@ Status my_string_extraction(MY_STRING hMy_string, FILE* fp)
     character = fgetc(fp);
     while(character != EOF && !isspace(character))
     {
-        if (pString->size >= pString->capacity)
+        if (my_string_push_back(pString, character) == FAILURE)
         {
-            char* temp = (char*) malloc(sizeof(char) * pString->capacity * 2);
-            if (temp == NULL)
-            {
-                return FAILURE;
-            }
-
-            for (int i = 0; i < pString->size; i++)
-            {
-                temp[i] = pString->data[i];
-            }
-            free(pString->data); 
-            pString->data = temp;
-            pString->capacity *= 2;
+            return FAILURE;
         }
-	// finishes up with the rest of the string
-        pString->data[pString->size] = character;
-        pString->size++;
         character = fgetc(fp);
 
     }
