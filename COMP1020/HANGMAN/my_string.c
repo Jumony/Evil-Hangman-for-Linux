@@ -229,3 +229,29 @@ int my_string_compare(MY_STRING hLeft_string, MY_STRING hRight_string)
     }
     return pLeftString->size - pRightString->size;
 }
+
+Status my_string_push_back(MY_STRING hString, char item)
+{
+    return FAILURE;
+}
+
+Status my_string_pop_back(MY_STRING hString)
+{
+    return FAILURE;
+}
+
+char* my_string_at(MY_STRING hString, int index)
+{
+    My_string* pString = (My_string*) hString;
+    if (index - 1 > pString->size)
+    {
+        return NULL;
+    }
+
+    return &(pString->data[index]);
+}
+
+char* my_string_c_str(MY_STRING hString)
+{
+    return NULL;
+}

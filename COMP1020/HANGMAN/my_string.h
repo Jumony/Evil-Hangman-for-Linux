@@ -72,3 +72,32 @@ int my_string_get_size(MY_STRING hMy_string);
 // 0 if the strings are the same and returns a number greater than zero
 // if the string represented by hLeft_string is bigger than hRight_string.
 int my_string_compare(MY_STRING hLeft_string, MY_STRING hRight_string);
+
+//Precondition: hMy_string is the handle to a valid My_string object.
+//Postcondition: If successful, places the character item at the end of the
+// string and returns SUCCESS. If the string does not have enough room and
+// cannot resize to accomodate the new character then the operation fails
+// and FAILURE is returned. The resize operation will attempt to amortize
+// the cost of a resize by making the string capacity somewhat larger than
+// it was before (up to 2 times bigger).
+Status my_string_push_back(MY_STRING hMy_string, char item);
+
+//Precondition: hMy_string is the handle to a valid My_string object.
+//Postcondition: Removes the last character of a string in a constant time.
+// Guaranteed to not cause a resize operation of the internal data. Returns
+// SUCCESS on success and FAILURE if the string is empty.
+Status my_string_pop_back(MY_STRING hMy_string);
+
+//Precondition: hMy_string is the handle to a valid My_string object.
+//Postcondition: Returns the address of the character located at the given
+// index if the index is in bounds but otherwise returns NULL. This address
+// is not usable as a c-string since the data is not NULL terminated and is
+// intended to just provide access to the elemtn at that index.
+char* my_string_at(MY_STRING hMy_string, int index);
+
+//Precondition: hMy_string is the handle to a valid My_string object.
+//Postcondition: Returns the address of the first element of the string object
+// for use as a c-string. The resulting c-string is guaranteed to be NULL
+// terminated and the memory is still maintained by the string object though
+// the NULL is not actually counted as part of the string (in size);
+char* my_string_c_str(MY_STRING hMy_stirng);
