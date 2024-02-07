@@ -131,10 +131,6 @@ Status my_string_extraction(MY_STRING hMy_string, FILE* fp)
     character = fgetc(fp);
     while(character != EOF && !isspace(character))
     {
-      // checks to see if the size of the character exceeds the capacity.
-      // if so, double the capacity of the struct, create a new string struct,
-      // and then paste values of previous string struct into the new one which
-      // has double the capacity of the old struct
         if (pString->size >= pString->capacity)
         {
             char* temp = (char*) malloc(sizeof(char) * pString->capacity * 2);
@@ -147,8 +143,8 @@ Status my_string_extraction(MY_STRING hMy_string, FILE* fp)
             {
                 temp[i] = pString->data[i];
             }
-            free(pString->data); // dont forget to free
-            pString->data = temp; // temp is a c-string (pointer to beginning of string). data is ALSO a c-string
+            free(pString->data); 
+            pString->data = temp;
             pString->capacity *= 2;
         }
 	// finishes up with the rest of the string
@@ -234,22 +230,30 @@ int my_string_compare(MY_STRING hLeft_string, MY_STRING hRight_string)
 
 Status my_string_push_back(MY_STRING hString, char item)
 {
-    My_string* pString = (My_string*) hString;
-    if (pString->size == pString->capacity)
+    My_string* pString = (My_string*)hString;
+    char* temp;
+    int i;
+
+      // checks to see if the size of the character exceeds the capacity.
+      // if so, double the capacity of the struct, create a new string struct,
+      // and then paste values of previous string struct into the new one which
+      // has double the capacity of the old struct
+    if (pString->size >= pString->capacity)
     {
-        My_string* temp = (My_string*)malloc(sizeof(My_string) * pString->capacity * 2);
+        temp = (char*)malloc(sizeof(char) * pString->capacity * 2);
         if (temp == NULL)
         {
             printf("Unable to allocate memory");
             return FAILURE;
         }
 
-        for (int i = 0; i < pString->size; i++)
+        for (i = 0; i < pString->size; i++)
         {
-            temp->data[i] = pString->data[i];
+            temp[i] = pString->data[i];
         }
-        free(pString->data);
-        pString->data = temp->data;
+
+        free(pString->data); // dont forget to free
+        pString->data = temp; // temp is a c-string (pointer to beginning of string). data is ALSO a c-string
         pString->capacity *= 2;
     }
 
@@ -258,16 +262,25 @@ Status my_string_push_back(MY_STRING hString, char item)
     return SUCCESS;
 }
 
+
 Status my_string_pop_back(MY_STRING hString)
 {
-    return FAILURE;
+    My_string* pString = (My_string*) hString;
+
+    if (pString->size == 0)
+    {
+        return FAILURE;
+    }
+    pString->size--;
+    return SUCCESS;
 }
 
 char* my_string_at(MY_STRING hString, int index)
 {
     My_string* pString = (My_string*) hString;
-    if (index - 1 > pString->size)
+    if (index - 1 > pString->size || index < 0)
     {
+        printf("Invalid Index");
         return NULL;
     }
 
@@ -278,13 +291,16 @@ char* my_string_c_str(MY_STRING hString)
 {
     My_string* pString = (My_string*) hString;
 
-    if (pString->size == pString->capacity)
-    {
-        pString->capacity = pString->capacity * 2;
-    }
-
     if (pString->size == 0)
     {
         return NULL;
     }
+
+    if (my_string_push_back((void*) pString, '\0') == FAILURE)
+    {
+        return NULL;
+    }
+
+    pString->size--;
+    return pString->data; // pString->data is 
 }
