@@ -56,4 +56,12 @@ Status my_string_extraction(MY_STRING hMy_string, FILE* fp);
 // FAILURE otherwise.
 Status my_string_insertion(MY_STRING hMy_string, FILE* fp);
 
+//Precondition: hMy_string is the handle of a valid My_string object.
+//Postcondition: Returns a copy of the integer value of the object's capacity.
+int my_string_get_capacity(MY_STRING hNy_string);
+
+//Precondition: hMy_string is the handle of a valid My_string object.
+//Postcondition: Returns a copy of the integer value of the object's size.
 int my_string_get_size(MY_STRING hMy_string);
+
+

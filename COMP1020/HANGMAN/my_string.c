@@ -196,6 +196,12 @@ Status my_string_insertion(MY_STRING hMy_string, FILE* fp)
     return SUCCESS;
 }
 
+int my_string_get_capacity(MY_STRING hMy_string)
+{
+    My_string* pString = (My_string*) hMy_string;
+    return pString->capacity;
+}
+
 int my_string_get_size(MY_STRING hMy_string)
 {
   My_string* pString = (My_string*) hMy_string;
