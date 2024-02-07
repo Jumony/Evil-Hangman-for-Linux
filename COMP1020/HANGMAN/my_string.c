@@ -19,6 +19,8 @@ typedef struct my_string My_string;
 // and it would also become less easy to work with. But by declaring it as a pointer to a struct, we can just work
 // with a single struct and manipulate that single struct rather than creating a whole new struct and copying
 // the values from the old struct into the new struct.
+// 3. WHENEVER POSSIBLE, SIZE IS INCREMENTED BY 1 AT THE END OF A FUNCTION TO PREPARE FOR THE NEXT.
+// THIS IS A DESIGN CHOICE
 MY_STRING my_string_init_default()
 {
     My_string* pString = malloc(sizeof(My_string)); // Set as pointer to allocate space on heap
@@ -232,7 +234,28 @@ int my_string_compare(MY_STRING hLeft_string, MY_STRING hRight_string)
 
 Status my_string_push_back(MY_STRING hString, char item)
 {
-    return FAILURE;
+    My_string* pString = (My_string*) hString;
+    if (pString->size == pString->capacity)
+    {
+        My_string* temp = (My_string*)malloc(sizeof(My_string) * pString->capacity * 2);
+        if (temp == NULL)
+        {
+            printf("Unable to allocate memory");
+            return FAILURE;
+        }
+
+        for (int i = 0; i < pString->size; i++)
+        {
+            temp->data[i] = pString->data[i];
+        }
+        free(pString->data);
+        pString->data = temp->data;
+        pString->capacity *= 2;
+    }
+
+    pString->data[pString->size] = item;
+    pString->size++;
+    return SUCCESS;
 }
 
 Status my_string_pop_back(MY_STRING hString)
@@ -253,5 +276,15 @@ char* my_string_at(MY_STRING hString, int index)
 
 char* my_string_c_str(MY_STRING hString)
 {
-    return NULL;
+    My_string* pString = (My_string*) hString;
+
+    if (pString->size == pString->capacity)
+    {
+        pString->capacity = pString->capacity * 2;
+    }
+
+    if (pString->size == 0)
+    {
+        return NULL;
+    }
 }
