@@ -101,3 +101,18 @@ char* my_string_at(MY_STRING hMy_string, int index);
 // terminated and the memory is still maintained by the string object though
 // the NULL is not actually counted as part of the string (in size);
 char* my_string_c_str(MY_STRING hMy_stirng);
+
+//Precondition: hResult and hAppend are handles to valid My_string objects.
+//Postcondition: hResult is the handle of a string that contains the original
+// hResult object followed by the hAppend object concatenated together. This
+// function should guarantee no change to the hAppend object and return
+// SUCCESS if the operation is successful and FAILURE if the hResult object
+// is unable to accomodate the characters in the hAppend string perhaps
+// because of a failed resize operation. On FAILURE, no change to either
+// string should be made
+Status my_string_concat(MY_STRING hResult, MY_STRING hAppend);
+
+//Precondition: hMy_string is the handle to a valid My_string object.
+//Postcondition: Returns an enumerated type with value TRUE if the string
+// is empty and FALSE otherwise.
+Status my_string_empty(MY_STRING hMy_string);

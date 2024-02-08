@@ -287,5 +287,34 @@ char* my_string_c_str(MY_STRING hString)
     }
 
     pString->size--;
-    return pString->data; // pString->data is 
+    return pString->data; // pString->data is char*
+}
+
+Status my_string_concat(MY_STRING hResult, MY_STRING hAppend)
+{
+    My_string* pString = (My_string*) hResult;
+    char* temp;
+    My_string* pAppend = (My_string*) hAppend;
+
+    temp = malloc(sizeof(char) * pString->size + pAppend->size + 1);
+    if (temp == NULL)
+    {
+        return FAILURE;
+    }
+
+    for (int i = 0; i < pString->size; i++)
+    {
+        temp[i] = pString->data[i];
+    }
+
+    free(pString->data);
+    pString->capacity = pString->size + pAppend->size + 1;
+    pString->data = temp;
+
+    for (int i = 0; i < pAppend->size; i++)
+    {
+        pString->data[pString->size] = pAppend->data[i];
+        pString->size++;
+    }
+    return SUCCESS;
 }
