@@ -318,3 +318,14 @@ Status my_string_concat(MY_STRING hResult, MY_STRING hAppend)
     }
     return SUCCESS;
 }
+
+Boolean my_string_empty(MY_STRING hMy_string)
+{
+    My_string* pString = (My_string*) hMy_string;
+
+    if (pString->size <= 0)
+    {
+        return TRUE;
+    }
+    return FALSE;
+}

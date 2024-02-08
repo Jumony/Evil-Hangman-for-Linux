@@ -7,6 +7,12 @@ enum status
 {
     FAILURE, SUCCESS
 };
+
+typedef enum boolean
+{
+    FALSE, TRUE
+} Boolean;
+
 typedef enum status Status;
 
 //Precondition: None
@@ -115,4 +121,4 @@ Status my_string_concat(MY_STRING hResult, MY_STRING hAppend);
 //Precondition: hMy_string is the handle to a valid My_string object.
 //Postcondition: Returns an enumerated type with value TRUE if the string
 // is empty and FALSE otherwise.
-Status my_string_empty(MY_STRING hMy_string);
+Boolean my_string_empty(MY_STRING hMy_string);
