@@ -6,7 +6,16 @@ int main(int argc, char* argv[])
     Status (*tests[])(char*, int) =
     {
         test_init_default_returns_nonNULL,
-        test_get_size_on_init_default_returns_0
+        test_get_size_on_init_default_returns_0,
+        test_ttran4_my_string_destroy_returns_nonNULL,
+        test_ttran4_my_string_init_c_string_capacity_is_greater_than_size_by_1,
+        test_ttran4_my_init_c_string_returns_identical_string,
+        test_ttran4_my_string_extraction_ignores_whitespace,
+        test_ttran4_my_string_extraction_ends_in_non_whitespace_character,
+        test_ttran4_my_string_insertion_handles_EOF,
+        test_ttran4_my_string_get_capacity_is_accurate,
+        test_ttran4_my_string_get_size_is_accurate
+
     };
 
     int number_of_functions = sizeof(tests)/sizeof(tests[0]);
