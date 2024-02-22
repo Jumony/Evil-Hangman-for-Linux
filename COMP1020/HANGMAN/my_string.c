@@ -265,7 +265,6 @@ char* my_string_at(MY_STRING hString, int index)
     My_string* pString = (My_string*) hString;
     if (index - 1 > pString->size || index < 0)
     {
-        printf("Invalid Index");
         return NULL;
     }
 

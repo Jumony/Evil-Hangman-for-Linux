@@ -189,6 +189,7 @@ Status test_ttran4_my_string_extraction_ends_in_non_whitespace_character(char* b
         return FAILURE;
     }
 
+    fclose(fp);
     strncpy(buffer, "test_ttran4_my_string_extraction_ends_in_non_whitespace_character\n", length);
     my_string_destroy(&hString);
 
@@ -287,4 +288,248 @@ Status test_ttran4_my_string_get_size_is_accurate(char* buffer, int length)
                 "my_string_get_size is not accurate\n", length);
         return FAILURE;
     }
+}
+
+Status test_ttran4_my_string_compare_strings_are_exact_same_handled(char* buffer, int length)
+{
+    char* test_string1 = "pear";
+    char* test_string2 = "pear";
+
+    MY_STRING hString1 = my_string_init_c_string(test_string1);
+    MY_STRING hString2 = my_string_init_c_string(test_string2);
+
+    if (my_string_compare(hString1, hString2) == 0)
+    {
+        my_string_destroy(&hString1);
+        my_string_destroy(&hString2);
+        strncpy(buffer, "test_ttran4_my_string_compare_strings_are_exact_same_handled\n", length);
+        return SUCCESS;
+    }
+    else
+    {
+        my_string_destroy(&hString1);
+        my_string_destroy(&hString2);
+        printf("my_string_compare does not return 0 when the strings are the same\n");
+        strncpy(buffer, "test_ttran4_my_string_compare_strings_are_exact_same_handled\n"
+                "my_string_compare did not handle the case where the two strings are the same in length\n", length);
+        return FAILURE;
+    }
+}
+
+Status test_ttran4_my_string_compare_strings_are_different_handled(char* buffer, int length)
+{
+    char* test_string1 = "bon";
+    char* test_string2 = "appetit";
+
+    MY_STRING hString1 = my_string_init_c_string(test_string1);
+    MY_STRING hString2 = my_string_init_c_string(test_string2);
+
+    if (my_string_compare(hString1, hString2) != 0)
+    {
+        my_string_destroy(&hString1);
+        my_string_destroy(&hString2);
+        strncpy(buffer, "test_ttran4_my_string_compare_strings_are_different_handled\n", length);
+        return SUCCESS;
+    }
+    else
+    {
+        my_string_destroy(&hString1);
+        my_string_destroy(&hString2);
+        printf("my_string_compare did not correctly handle the case where the strings are different\n");
+        strncpy(buffer, "test_ttran4_my_string_compare_strings_are_different_handled\n"
+                "my_string_compare returned a number != 0 when the strings were of different sizes\n", length);
+        return FAILURE;
+    }
+}
+
+Status test_ttran4_my_string_push_back_handles_resize(char* buffer, int length)
+{
+    MY_STRING hString = my_string_init_default();
+
+    for (int i = 0; i < 10; i++)
+    {
+        if (my_string_push_back(hString, 'a') != SUCCESS)
+        {
+            my_string_destroy(&hString);
+            printf("my_string_push_back did not properly make enough space for more characters\n");
+            strncpy(buffer, "test_ttran4_my_string_push_back_handles_resize\n"
+                    "my_string_push_back did not resize correctly\n", length);
+            return FAILURE;
+        }
+    }
+    strncpy(buffer, "test_ttran4_my_string_push_back_handles_resize\n", length);
+    my_string_destroy(&hString);
+    return SUCCESS;
+}
+
+Status test_ttran4_my_string_push_back_handles_size_and_capacity_when_resizing(char* buffer, int length)
+{
+    int initialCapacity = 7;
+    MY_STRING hString = my_string_init_default();
+    for (int i = 0; i < 10; i++)
+    {
+        my_string_push_back(hString, 'a');
+    }
+
+    if (my_string_get_capacity(hString) > initialCapacity && my_string_get_size(hString) == 10)
+    {
+        my_string_destroy(&hString);
+        strncpy(buffer, "test_ttran4_my_string_push_back_handles_size_and_capacity_when_resizing\n", length);
+        return SUCCESS;
+    }
+    else
+    {
+        printf("size and capacity are not handled correctly during resize. size is %d, and capacity is %d\n", my_string_get_size(hString), my_string_get_capacity(hString));
+        strncpy(buffer, "test_ttran4_my_string_push_back_handles_size_and_capacity_when_resizing\n"
+                "size and capacity are not handled correctly\n", length);
+        my_string_destroy(&hString);
+        return FAILURE;
+    }
+}
+
+Status test_ttran4_my_string_init_default_initial_capacity_is_correct(char* buffer, int length)
+{
+    MY_STRING hString = my_string_init_default();
+    int initialCapacity = 7;
+    
+    if (my_string_get_capacity(hString) == initialCapacity)
+    {
+        my_string_destroy(&hString);
+        strncpy(buffer, "test_ttran4_my_string_init_default_initial_capacity_is_correct\n", length);   
+        return SUCCESS;
+    }
+    else
+    {
+        printf("initial capacity is supposed to be 7, not %d\n", my_string_get_capacity(hString));
+        strncpy(buffer, "test_ttran_my_string_init_default_initial_capacity_is_correct\n"
+                "string is not initialized with proper initial capacity\n", length);
+        my_string_destroy(&hString);
+        return FAILURE;
+    }
+}
+
+Status test_ttran4_my_string_push_back_resize_accurately_replicates_string(char* buffer, int length)
+{
+    char* test_string = "peter";
+    char* copy = "peter";
+
+    MY_STRING hString = my_string_init_c_string(test_string);
+    MY_STRING hStringCopy = my_string_init_c_string(copy);
+
+    for (int i = 0; i < 3; i++)
+    {
+        my_string_push_back(hString, 'r');
+    }
+
+    for (int i = 0; i < my_string_get_size(hStringCopy); i++)
+    {
+        if (*my_string_at(hString, i) != *my_string_at(hStringCopy, i))
+        {
+            my_string_destroy(&hString);
+            my_string_destroy(&hStringCopy);
+
+            printf("characters are not copied correctly after resize. error found at index %d\n", i);
+            strncpy(buffer, "test_ttran4_my_string_push_back_resize_accurately_replicates_string\n"
+                    "characters are not copied correctly after resize\n", length);
+            return FAILURE;
+        }
+    }
+    my_string_destroy(&hString);
+    my_string_destroy(&hStringCopy);
+    strncpy(buffer, "test_ttran4_my_string_push_back_resize_accurately_replicates_string\n", length);
+    return SUCCESS;
+}
+
+Status test_ttran4_my_string_pop_back_handles_string_size_less_than_1(char* buffer, int length)
+{
+    MY_STRING hString = my_string_init_default();
+    if (my_string_pop_back(hString) == FAILURE)
+    {
+        my_string_destroy(&hString);
+        strncpy(buffer, "test_ttran4_my_string_pop_back_handles_string_size_less_than_1\n", length);
+        return SUCCESS;
+    }
+    
+    my_string_destroy(&hString);
+    printf("tried to pop a string with size 0\n");
+    strncpy(buffer, "test_ttran4_my_string_pop_back_handles_string_size_less_than_1\n"
+            "cannot pop a string 0 characters\n", length);
+    return FAILURE;
+}
+
+Status test_ttran4_my_string_pop_back_size_gets_subtracted_by_1(char* buffer, int length)
+{
+    char* test_string = "peter the horse is here";
+    MY_STRING hString = my_string_init_c_string(test_string);
+    int initialSize = my_string_get_size(hString);
+
+    my_string_pop_back(hString);
+    
+    if (my_string_get_size(hString) == initialSize - 1)
+    {
+        my_string_destroy(&hString);
+        strncpy(buffer, "test_ttran4_my_string_pop_back_size_gets_subtracted_by_1\n", length);
+        return SUCCESS;
+    }
+
+    else
+    {
+        printf("did not properly subtract size by 1 after pop function\n");
+        strncpy(buffer, "test_ttran4_my_string_pop_back_size_gets_subtracted_by_1\n"
+                "size was not handled properly after pop function\n", length);
+        my_string_destroy(&hString);
+        return FAILURE;
+    }
+}
+
+Status test_ttran4_my_string_at_handles_invalid_index(char* buffer, int length)
+{
+    char* test_string = "skibidi";
+    MY_STRING hString = my_string_init_c_string(test_string);
+
+    if (my_string_at(hString, 100) == NULL)
+    {
+        my_string_destroy(&hString);
+        strncpy(buffer, "test_ttran4_my_string_at_handles_invalid_index\n",length);
+        return SUCCESS;
+    }
+    else
+    {
+        my_string_destroy(&hString);
+        printf("did not handle the case in which a valid index is entered\n");
+        strncpy(buffer, "test_ttran4_my_string_at_handles_invalid_index\n"
+                "should return NULL if index is invalid\n", length);
+        return FAILURE;
+    }
+}
+
+Status test_ttran4_my_string_c_str_ends_in_null_terminator(char* buffer, int length)
+{
+    char* test_string = "gentleman googoo";
+    MY_STRING hString = my_string_init_c_string(test_string);
+
+    char* c_str = my_string_c_str(hString);
+
+    if (c_str[my_string_get_size(hString)] != '\0')
+    {
+        my_string_destroy(&hString);
+        printf("my_string_c_str did not end the string with a null terminator \\0\n");
+        strncpy(buffer, "test_ttran4_my_string_c_str_ends_in_null_terminator\n"
+                "the returned string does not end with \\0\n", length);
+        return FAILURE;
+    }
+    my_string_destroy(&hString);
+    strncpy(buffer, "test_ttran4_my_string_c_str_ends_in_null_terminator\n", length);
+    return SUCCESS;
+
+}
+
+Status test_ttran4_my_string_c_str_handles_string_size_0(char* buffer, int length)
+{
+    return SUCCESS;
+}
+
+Status test_ttran4_my_string_c_str_subtracts_size_by_1(char* buffer, int length)
+{
+    return SUCCESS;
 }

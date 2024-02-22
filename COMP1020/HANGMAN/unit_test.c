@@ -14,7 +14,17 @@ int main(int argc, char* argv[])
         test_ttran4_my_string_extraction_ends_in_non_whitespace_character,
         test_ttran4_my_string_insertion_handles_EOF,
         test_ttran4_my_string_get_capacity_is_accurate,
-        test_ttran4_my_string_get_size_is_accurate
+        test_ttran4_my_string_get_size_is_accurate,
+        test_ttran4_my_string_compare_strings_are_exact_same_handled,
+        test_ttran4_my_string_compare_strings_are_different_handled,
+        test_ttran4_my_string_push_back_handles_resize,
+        test_ttran4_my_string_push_back_handles_size_and_capacity_when_resizing,
+        test_ttran4_my_string_init_default_initial_capacity_is_correct,
+        test_ttran4_my_string_push_back_resize_accurately_replicates_string,
+        test_ttran4_my_string_pop_back_handles_string_size_less_than_1,
+        test_ttran4_my_string_pop_back_size_gets_subtracted_by_1,
+        test_ttran4_my_string_at_handles_invalid_index,
+        test_ttran4_my_string_c_str_ends_in_null_terminator
 
     };
 
@@ -34,7 +44,7 @@ int main(int argc, char* argv[])
         }
         else
         {
-            //printf("PASS: Test %d passed\n" i);
+            //printf("PASS: Test %d passed\n", i);
             //printf("\t%s\n", buffer);
             success_count++;
         }
