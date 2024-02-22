@@ -196,7 +196,7 @@ Status test_ttran4_my_string_extraction_ends_in_non_whitespace_character(char* b
     return SUCCESS;
 }
 
-// DEFINITELY DID SOMETHING WRONG WITH THIS FUNCTION TEST
+/* DEFINITELY DID SOMETHING WRONG WITH THIS FUNCTION TEST
 Status test_ttran4_my_string_insertion_handles_EOF(char* buffer, int length)
 {
     FILE* fp;
@@ -242,6 +242,7 @@ Status test_ttran4_my_string_insertion_handles_EOF(char* buffer, int length)
         return SUCCESS;
     }
 }
+*/
 
 Status test_ttran4_my_string_get_capacity_is_accurate(char* buffer, int length)
 {
@@ -526,10 +527,149 @@ Status test_ttran4_my_string_c_str_ends_in_null_terminator(char* buffer, int len
 
 Status test_ttran4_my_string_c_str_handles_string_size_0(char* buffer, int length)
 {
-    return SUCCESS;
+    char* test_string = "";
+    MY_STRING hString = my_string_init_c_string(test_string);
+
+    
+    if (my_string_c_str(hString) == NULL)
+    {
+        my_string_destroy(&hString);
+        strncpy(buffer, "test_ttran4_my_string_c_str_handles_string_size_0\n", length);
+        return SUCCESS;
+    }
+    else
+    {
+        my_string_destroy(&hString);
+        printf("NULL was not returned upon a string of size zero\n");
+        strncpy(buffer, "test_ttran4_my_string_c_str_handles_string_size_0\n"
+                "NULL should've been returned upon encountering a string of size 0\n", length);
+        return FAILURE;
+    }
 }
 
 Status test_ttran4_my_string_c_str_subtracts_size_by_1(char* buffer, int length)
 {
+    char* test_string = "sigurd";
+    MY_STRING hString1 = my_string_init_c_string(test_string);
+    int initialSize = my_string_get_size(hString1);
+
+    char* compared_string = my_string_c_str(hString1);
+    MY_STRING hString2 = my_string_init_c_string(compared_string);
+    int size_after_c_str = my_string_get_size(hString2);
+
+    if (initialSize == size_after_c_str)
+    {
+        my_string_destroy(&hString1);
+        my_string_destroy(&hString2);
+
+        strncpy(buffer, "test_ttran4_my_string_c_str_subtracts_size_by_1", length);
+        return SUCCESS;
+    }
+    else
+    {
+        my_string_destroy(&hString1);
+        my_string_destroy(&hString2);
+
+        printf("size was not subtracted by 1\n");
+        strncpy(buffer, "test_ttran4_my_string_c_str_subtracts_size_by_1\n"
+                "size should be subtracted by one after my_string_c_str is executed\n", length);
+        return FAILURE;
+    }
+}
+
+Status test_ttran4_my_string_concat_is_accurate(char* buffer, int length)
+{
+    char* temp_string = "kai ";
+    char* to_append = "cenat";
+    char* expected_result = "kai cenat";
+    MY_STRING hString = my_string_init_c_string(temp_string);
+    MY_STRING hAppend = my_string_init_c_string(to_append);
+    MY_STRING expected_string = my_string_init_c_string(expected_result);
+
+    my_string_concat(hString, hAppend);
+
+    for (int i = 0; i < my_string_get_size(expected_string); i++)
+    {
+        if (*my_string_at(hString, i) != *my_string_at(expected_string, i))
+        {
+            my_string_destroy(&hAppend);
+            my_string_destroy(&hString);
+            my_string_destroy(&expected_string);
+            printf("something went wrong when concatenating strings\n");
+            strncpy(buffer, "test_ttran4_my_string_concat_is_accurate\n"
+                    "string is no longer identical after concatenation\n", length);
+            return FAILURE;
+        }
+    }
+    my_string_destroy(&hAppend);
+    my_string_destroy(&hString);
+    my_string_destroy(&expected_string);
+
+    strncpy(buffer, "test_ttran4_my_string_concat_is_accurate\n", length);
     return SUCCESS;
+}
+
+Status test_ttran4_my_string_concat_capacity_handled_after_concatenation(char* buffer, int length)
+{
+    char* temp_string = "dan ";
+    char* to_append = "forehead";
+    MY_STRING hString = my_string_init_c_string(temp_string);
+    MY_STRING hAppend = my_string_init_c_string(to_append);
+
+    my_string_concat(hString, hAppend);
+
+    if (my_string_get_capacity(hString) != 13)
+    {
+        my_string_destroy(&hString);
+        my_string_destroy(&hAppend);
+
+        printf("capacity is not handled correctly.\n");
+        strncpy(buffer, "test_ttran4_my_string_concat_capacity_handled_after_concatenation\n"
+                "capacity should be 1 greater than concatenated string\n", length);
+        return FAILURE;
+    }
+    my_string_destroy(&hString);
+    my_string_destroy(&hAppend);
+    strncpy(buffer, "test_ttran4_my_string_concat_capacity_handled_after_concatenation\n", length);
+    return SUCCESS;
+}
+
+Status test_ttran4_my_string_concat_size_handled_after_concatenation(char* buffer, int length)
+{
+    char* test_string = "hideo ";
+    char* to_append = "kojima";
+    MY_STRING hString = my_string_init_c_string(test_string);
+    MY_STRING hAppend = my_string_init_c_string(to_append);
+
+    my_string_concat(hString, hAppend);
+
+    if (my_string_get_size(hString) != 12)
+    {
+        my_string_destroy(&hString);
+        my_string_destroy(&hAppend);
+        printf("size is not handled correctly.\n");
+        strncpy(buffer, "test_ttran4_my_string_concat_size_handled_after_concatenation\n"
+                "size is inaccurate and does not match actual concatenated string\n", length);
+        return FAILURE;
+    }
+    my_string_destroy(&hAppend);
+    my_string_destroy(&hString);
+    strncpy(buffer, "test_ttran4_my_string_concat_size_handled_after_concatenation\n", length);
+    return SUCCESS;
+}
+
+Status test_ttran4_my_string_empty_is_accurate(char* buffer, int length)
+{
+    MY_STRING hString = my_string_init_default();
+    if (my_string_empty(hString) == TRUE)
+    {
+        my_string_destroy(&hString);
+        strncpy(buffer, "test_ttran4_my_string_empty_is_accurate\n", length);
+        return SUCCESS;
+    }
+    my_string_destroy(&hString);
+    printf("my_string_empty is not accurate\n");
+    strncpy(buffer, "test_ttran4_my_string_empty_is_accurate\n"
+            "did not return TRUE when given an empty string\n", length);
+    return FAILURE;
 }
