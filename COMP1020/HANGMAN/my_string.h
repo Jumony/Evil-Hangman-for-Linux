@@ -122,3 +122,37 @@
     //Postcondition: Returns an enumerated type with value TRUE if the string
     // is empty and FALSE otherwise.
     Boolean my_string_empty(MY_STRING hMy_string);
+
+    //Precondition: hLeft and hRight contain the handles of valid
+    //  MY_STRING objects.
+    //Postcondition: On Success, hLeft will contain the handle
+    //  to a valid MY_STRING object that is a deep copy of the object indicated
+    //  by hRight. The object indicated by the handle at the address pLeft will
+    //  attempt to resize to hold that data in Right. If the object on the left
+    //  already has enough room to store all of the data on the right then it
+    //  will not resize. hLeft will have the same size as hRight if the call
+    //  succeeds but the capacities may differ. The data in the dynamic arrays
+    //  up to size number of elements will be identical in both objects.
+    //  On failure pLeft will be unchanged and a Status of FAILURE will be
+    // returned.
+    Status my_string_assignment(MY_STRING hLeft, MY_STRING hRight);
+
+    //Precondition; hMy_string is the handle to a valid MY_STRING object.
+    //Postcondition: Will return the handle to a valid MY_STRING object that
+    //  is a deep copy of the object indicated by hMY_string. This means the
+    //  copied object will be a complete and independent copy and not share
+    //  any data with the object we are copying from. On failure the function will
+    //  return NULL.
+    MY_STRING my_string_init_copy(MY_STRING hMy_string);
+
+    //Precondition: hLeft and hRight are handles to valid MY_STRING objects.
+    //Postcondition: After the function hLeft will contain the size, capacity, and
+    //  data of the object indicated by hRIght and hRight will contain
+    //  the size capacity and data of the object indicated by hLeft. This function
+    //  will be much faster than making deep copies of the objects using
+    //  my_string_assignment and attempting to swap them in the traditional way
+    //  calling my_string_assignment in place of the '=' below.
+    //  temp = a;
+    //  a = b;
+    //  b = temp;
+    void my_string_swap(MY_STRING hLeft, MY_STRING hRight);

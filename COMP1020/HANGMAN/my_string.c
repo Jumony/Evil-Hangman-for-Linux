@@ -328,3 +328,42 @@ Boolean my_string_empty(MY_STRING hMy_string)
     }
     return FALSE;
 }
+
+Status my_string_assignment(MY_STRING hLeft, MY_STRING hRight)
+{
+    if (hLeft == NULL)
+    {
+        hLeft = my_string_init_c_string(my_string_c_str(hRight));
+        if (hLeft == NULL)
+        {
+            return FAILURE;
+        }
+    }
+
+    My_string* pLeft = (My_string*)hLeft;
+    My_string* pRight = (My_string*)hRight;
+
+    if (pLeft->capacity <= pRight->size)
+    {
+        char* temp = (char*)malloc(sizeof(char) * pRight->size + 1);
+        if (temp == NULL)
+        {
+            printf("Failed to allocate memory\n");
+            return FAILURE;
+        }
+        for (int i = 0; i < pLeft->size; i++)
+        {
+            temp[i] = pLeft->data[i];
+        }
+        free(pLeft->data);
+        pLeft->data = temp;
+        pLeft->capacity = pRight->size + 1;
+    }
+
+    for (int i = 0; i < pRight->size; i++)
+    {
+        pLeft->data[i] = pRight->data[i];
+    }
+    pLeft->size = pRight->size;
+    return SUCCESS;
+}
