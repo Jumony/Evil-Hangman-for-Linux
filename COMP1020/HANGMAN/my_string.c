@@ -247,7 +247,8 @@ Status my_string_push_back(MY_STRING hString, char item)
     return SUCCESS;
 }
 
-
+// Should add an automatic resize function soon.
+// Resize by 1/2 after size is 1/4 of capacity
 Status my_string_pop_back(MY_STRING hString)
 {
     My_string* pString = (My_string*) hString;
@@ -260,6 +261,7 @@ Status my_string_pop_back(MY_STRING hString)
     return SUCCESS;
 }
 
+//
 char* my_string_at(MY_STRING hString, int index)
 {
     My_string* pString = (My_string*) hString;
@@ -282,10 +284,11 @@ char* my_string_c_str(MY_STRING hString)
 
     if (my_string_push_back((void*) pString, '\0') == FAILURE)
     {
+      printf("Failed to end with null terminator\n");
         return NULL;
     }
 
-    pString->size--;
+    pString->size--; // simulates a c string
     return pString->data; // pString->data is char*
 }
 
@@ -331,15 +334,6 @@ Boolean my_string_empty(MY_STRING hMy_string)
 
 Status my_string_assignment(MY_STRING hLeft, MY_STRING hRight)
 {
-    if (hLeft == NULL)
-    {
-        hLeft = my_string_init_c_string(my_string_c_str(hRight));
-        if (hLeft == NULL)
-        {
-            return FAILURE;
-        }
-    }
-
     My_string* pLeft = (My_string*)hLeft;
     My_string* pRight = (My_string*)hRight;
 
@@ -366,4 +360,55 @@ Status my_string_assignment(MY_STRING hLeft, MY_STRING hRight)
     }
     pLeft->size = pRight->size;
     return SUCCESS;
+}
+
+MY_STRING my_string_init_copy(MY_STRING hMy_string)
+{
+    My_string* pMy_string = (My_string*)hMy_string;
+    My_string* pNewString = (My_string*)malloc(sizeof(My_string));
+    if (pNewString == NULL)
+    {
+        printf("Failed to allocate memory\n");
+        return NULL;
+    }
+
+    // Copies attributes of hMy_string to pNewString
+    pNewString->capacity = pMy_string->capacity;
+    pNewString->size = pMy_string->size;
+    pNewString->data = (char*)malloc(sizeof(char) * pMy_string->capacity);
+    
+    if (pNewString->data == NULL)
+    {
+        free(pNewString);
+        printf("Failed to allocate memory\n");
+        return NULL;
+    }
+
+    for (int i = 0; i < pMy_string->size; i++)
+    {
+        pNewString->data[i] = pMy_string->data[i];
+    }
+    return pNewString;
+}
+
+void my_string_swap(MY_STRING hLeft, MY_STRING hRight)
+{
+    My_string* pLeft = (My_string*)hLeft;
+    My_string* pRight = (My_string*)hRight;
+
+    int pLSize = pLeft->size;
+    int pLCapacity = pLeft->capacity;
+    char* pLData = pLeft->data;
+
+    int pRSize = pRight->size;
+    int pRCapacity = pRight->capacity;
+    char* pRData = pRight->data;
+
+    pLeft->size = pRSize;
+    pLeft->capacity = pRCapacity;
+    pLeft->data = pRData;
+
+    pRight->size = pLSize;
+    pRight->capacity = pLCapacity;
+    pRight->data = pLData;
 }
