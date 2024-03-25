@@ -1,17 +1,8 @@
     #include <stdio.h>
     #include <stdlib.h>
+    #include "status.h"
 
     typedef void* MY_STRING;
-
-    enum status
-    {
-        FAILURE, SUCCESS
-    };
-
-    typedef enum boolean
-    {
-        FALSE, TRUE
-    } Boolean;
 
     typedef enum status Status;
 

@@ -23,25 +23,25 @@ typedef struct my_string My_string;
 // THIS IS A DESIGN CHOICE
 MY_STRING my_string_init_default()
 {
-    My_string* pString = malloc(sizeof(My_string)); // Set as pointer to allocate space on heap
+    My_string* pString = malloc(sizeof(My_string));
     if (pString == NULL)
     {
         printf("Unable to allocate memory, returning NULL");
         return NULL;
     }
 
-    // Sets default values
     pString->capacity = 7;
     pString->size = 0;
     pString->data = (char*)malloc(sizeof(char) * pString->capacity);
-
     if (pString->data == NULL)
     {
-        free(pString);
+        free(pString); // Free the My_string structure if data allocation fails
+        printf("Unable to allocate memory, returning NULL");
         return NULL;
     }
     return pString;
 }
+
 
 void my_string_destroy(MY_STRING* phMy_string)
 {
@@ -52,6 +52,7 @@ void my_string_destroy(MY_STRING* phMy_string)
     free(pString->data);
     free(pString);
     *phMy_string = NULL;
+
 }
 
 /*
@@ -100,57 +101,62 @@ MY_STRING my_string_init_c_string(const char* c_string)
 
 Status my_string_extraction(MY_STRING hMy_string, FILE* fp)
 {
-    My_string* pString = (My_string*) hMy_string; // Typecasts hMy_string to and sets it equal to pString so its easier to reference. 
+    My_string* pString = (My_string*) hMy_string;
     char c;
-    int character;
 
+    if (fp == NULL || pString == NULL)
+    {
+        return FAILURE;
+    }
+
+    // Reset string size
     pString->size = 0;
 
-    if (fp == NULL)
+    // Allocate memory for string data if not already allocated
+    if (pString->data == NULL)
+    {
+        pString->data = (char*)malloc(sizeof(char) * 7);
+        if (pString->data == NULL)
+        {
+            return FAILURE;
+        }
+        pString->capacity = 7;
+    }
+
+    // Read characters from file until EOF or whitespace
+    while ((c = fgetc(fp)) != EOF && !isspace(c))
+    {
+        // Resize data buffer if needed
+        if (pString->size >= pString->capacity - 1) // Leave space for null terminator
+        {
+            char* temp = (char*)realloc(pString->data, sizeof(char) * (pString->capacity * 2));
+            if (temp == NULL)
+            {
+                return FAILURE;
+            }
+            pString->data = temp;
+            pString->capacity *= 2;
+        }
+
+        // Store character in string
+        pString->data[pString->size++] = c;
+    }
+
+    // Null-terminate the string
+    pString->data[pString->size] = '\0';
+
+    // Handle EOF
+    if (feof(fp)) // Check for end of file
     {
         return FAILURE;
     }
 
-    // Gets character 'c' and makes sure that it is not a whitespace, if so, keep getting next character until we dont hit a whitespace
-    c = fgetc(fp);
-    if (c == EOF)
+    // Put back the whitespace character into the stream if it's not EOF
+    if (!isspace(c) && ungetc(c, fp) == EOF)
     {
         return FAILURE;
     }
-    while(c == ' ')
-    {
-        c = fgetc(fp);
-    }
 
-    // puts the first character into pString's data member and then increments size to be ready for next character
-    pString->data[pString->size] = c;
-    pString->size++;
-
-    // fgetc returns the character that is read as an integer value
-    // finishes up gathering the rest of the characters in the string
-    character = fgetc(fp);
-    while(character != EOF && !isspace(character))
-    {
-        if (my_string_push_back(pString, character) == FAILURE)
-        {
-            return FAILURE;
-        }
-        character = fgetc(fp);
-
-    }
-
-    // if character hits a space, we've reached the end of the word so
-    // we use ungetc to setup for the next string by ending right before
-    // the white space.
-    // ungetc puts the character back into the input stream
-    if (isspace(character))
-    {
-      // what is this checking? 
-        if (ungetc(character, fp) == EOF)
-        {
-            return FAILURE;
-        }
-    }
     return SUCCESS;
 }
 
@@ -337,28 +343,36 @@ Status my_string_assignment(MY_STRING hLeft, MY_STRING hRight)
     My_string* pLeft = (My_string*)hLeft;
     My_string* pRight = (My_string*)hRight;
 
-    if (pLeft->capacity <= pRight->size)
+    if (hLeft == NULL)
     {
-        char* temp = (char*)malloc(sizeof(char) * pRight->size + 1);
-        if (temp == NULL)
+        hLeft = my_string_init_c_string(my_string_c_str(hRight));
+        if (hLeft == NULL)
         {
-            printf("Failed to allocate memory\n");
             return FAILURE;
         }
-        for (int i = 0; i < pLeft->size; i++)
-        {
-            temp[i] = pLeft->data[i];
-        }
-        free(pLeft->data);
-        pLeft->data = temp;
-        pLeft->capacity = pRight->size + 1;
     }
 
-    for (int i = 0; i < pRight->size; i++)
+    else
     {
-        pLeft->data[i] = pRight->data[i];
+        if (pLeft->capacity <= pRight->size)
+        {
+            char* temp = (char*)malloc(sizeof(char) * pRight->size + 1);
+            if (temp == NULL)
+            {
+                printf("Failed to allocate memory\n");
+                return FAILURE;
+            }
+            free(pLeft->data);
+            pLeft->data = temp;
+            pLeft->capacity = pRight->size + 1;
+        }
+
+        for (int i = 0; i < pRight->size; i++)
+        {
+            pLeft->data[i] = pRight->data[i];
+        }
+        pLeft->size = pRight->size;
     }
-    pLeft->size = pRight->size;
     return SUCCESS;
 }
 
