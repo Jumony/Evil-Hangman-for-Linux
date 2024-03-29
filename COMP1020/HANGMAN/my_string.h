@@ -1,6 +1,7 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include "status.h"
+    #include "generic.h"
 
     typedef void* MY_STRING;
 
@@ -18,7 +19,7 @@
     //Postcondition: The memory used for the MY_STRING object has be reclaimed by
     // the system and the handle referred to by the pointer phMy_string has been
     // set to NULL.
-    void my_string_destroy(MY_STRING* phMy_string);
+    void my_string_destroy(ITEM* phMy_string);
 
     //Precondition: c_string is a valid null temrinated c-string.
     //Postcondition: Allocate space for a string object that represents a string
@@ -97,7 +98,7 @@
     // for use as a c-string. The resulting c-string is guaranteed to be NULL
     // terminated and the memory is still maintained by the string object though
     // the NULL is not actually counted as part of the string (in size);
-    char* my_string_c_str(MY_STRING hMy_stirng);
+    char* my_string_c_str(MY_STRING hMy_string);
 
     //Precondition: hResult and hAppend are handles to valid My_string objects.
     //Postcondition: hResult is the handle of a string that contains the original
@@ -126,7 +127,7 @@
     //  up to size number of elements will be identical in both objects.
     //  On failure pLeft will be unchanged and a Status of FAILURE will be
     // returned.
-    Status my_string_assignment(MY_STRING hLeft, MY_STRING hRight);
+    Status my_string_assignment(ITEM phLeft, ITEM hRight);
 
     //Precondition; hMy_string is the handle to a valid MY_STRING object.
     //Postcondition: Will return the handle to a valid MY_STRING object that

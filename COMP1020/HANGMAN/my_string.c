@@ -43,17 +43,14 @@ MY_STRING my_string_init_default()
 }
 
 
-void my_string_destroy(MY_STRING* phMy_string)
+void my_string_destroy(ITEM* phItem)
 {
-  // Pass by reference (passing in a pointer)
-  // Sets a My_string pointer to struct (pString) to the inputted parameter. Allows us to modify the inputted parameter directly
-  // By setting two pointers equal to each other, by modifying one pointer, you are effectively modifying the entire values at the address 
-    My_string* pString = (My_string*) *phMy_string; //The right side of the expression equates to My_string* phMy_string
-    free(pString->data);
-    free(pString);
-    *phMy_string = NULL;
-
+    My_string* pMy_string = (My_string*) *phItem; // cast to the known type
+    free(pMy_string->data); // release the data pointer within the object
+    free(pMy_string); // release the pointer to the object itself
+    *phItem = NULL; // and set it to NULL
 }
+
 
 /*
   void my_string_destroy2(void* phMy_string)
@@ -222,7 +219,6 @@ int my_string_compare(MY_STRING hLeft_string, MY_STRING hRight_string)
 Status my_string_push_back(MY_STRING hString, char item)
 {
     My_string* pString = (My_string*)hString;
-    char* temp;
     int i;
 
       // checks to see if the size of the character exceeds the capacity.
@@ -231,7 +227,7 @@ Status my_string_push_back(MY_STRING hString, char item)
       // has double the capacity of the old struct
     if (pString->size >= pString->capacity)
     {
-        temp = (char*)malloc(sizeof(char) * pString->capacity * 2);
+        char* temp = (char*)malloc(sizeof(char) * pString->capacity * 2);
         if (temp == NULL)
         {
             printf("Unable to allocate memory");
@@ -240,6 +236,8 @@ Status my_string_push_back(MY_STRING hString, char item)
 
         for (i = 0; i < pString->size; i++)
         {
+            printf("Size is: %d\n", pString->size);
+            printf("Capacity is: %d\n", pString->capacity);
             temp[i] = pString->data[i];
         }
 
@@ -252,6 +250,7 @@ Status my_string_push_back(MY_STRING hString, char item)
     pString->size++;
     return SUCCESS;
 }
+
 
 // Should add an automatic resize function soon.
 // Resize by 1/2 after size is 1/4 of capacity
@@ -287,8 +286,9 @@ char* my_string_c_str(MY_STRING hString)
     {
         return NULL;
     }
-
-    if (my_string_push_back((void*) pString, '\0') == FAILURE)
+    printf("size within my_string_c_str: %d\n", pString->size);
+    printf("capacity within my_string_c_str: %d\n", pString->capacity);
+    if (my_string_push_back(pString, '\0') == FAILURE)
     {
       printf("Failed to end with null terminator\n");
         return NULL;
@@ -298,31 +298,33 @@ char* my_string_c_str(MY_STRING hString)
     return pString->data; // pString->data is char*
 }
 
+
+
 Status my_string_concat(MY_STRING hResult, MY_STRING hAppend)
 {
-    My_string* pString = (My_string*) hResult;
-    char* temp;
+    My_string* pResult = (My_string*) hResult;
     My_string* pAppend = (My_string*) hAppend;
-
-    temp = malloc(sizeof(char) * pString->size + pAppend->size + 1);
-    if (temp == NULL)
+    
+    if (pResult->size + pAppend->size > pResult->capacity)
     {
-        return FAILURE;
+        char* temp = (char*)malloc(sizeof(char) * (pResult->size + pAppend->size + 1));
+        if (temp == NULL)
+        {
+            return FAILURE;
+        }
+        for (int i = 0; i < pResult->size; i++)
+        {
+            temp[i] = pResult->data[i];
+        }
+        free(pResult->data);
+        pResult->data = temp;
+        pResult->capacity = pResult->size + pAppend->size + 1;
     }
-
-    for (int i = 0; i < pString->size; i++)
-    {
-        temp[i] = pString->data[i];
-    }
-
-    free(pString->data);
-    pString->capacity = pString->size + pAppend->size + 1;
-    pString->data = temp;
 
     for (int i = 0; i < pAppend->size; i++)
     {
-        pString->data[pString->size] = pAppend->data[i];
-        pString->size++;
+        pResult->data[pResult->size] = pAppend->data[i];
+        pResult->size++;
     }
     return SUCCESS;
 }
@@ -338,15 +340,15 @@ Boolean my_string_empty(MY_STRING hMy_string)
     return FALSE;
 }
 
-Status my_string_assignment(MY_STRING hLeft, MY_STRING hRight)
+Status my_string_assignment(ITEM phLeft, ITEM hRight)
 {
-    My_string* pLeft = (My_string*)hLeft;
+    My_string* pLeft = (My_string*)phLeft;
     My_string* pRight = (My_string*)hRight;
 
-    if (hLeft == NULL)
+    if (pLeft == NULL)
     {
-        hLeft = my_string_init_c_string(my_string_c_str(hRight));
-        if (hLeft == NULL)
+        pLeft = my_string_init_c_string(my_string_c_str(hRight));
+        if (pLeft == NULL)
         {
             return FAILURE;
         }

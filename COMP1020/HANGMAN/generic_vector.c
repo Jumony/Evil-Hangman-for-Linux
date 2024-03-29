@@ -117,7 +117,7 @@ Status generic_vector_pop_back(GENERIC_VECTOR hVector)
 	{
 		return FAILURE;
 	}
-	pVector->destroy(&pVector->data[pVector->size - 1]);
+	pVector->destroy(&(pVector->data[pVector->size - 1]));
 	pVector->size--;
 	return SUCCESS;
 }
@@ -129,7 +129,11 @@ void generic_vector_destroy(GENERIC_VECTOR* phVector)
 
 	for (i = 0; i < pVector->size; i++)
 	{
-		pVector->destroy(&pVector->data[i]);
+		if(pVector->data != NULL)
+		{
+			pVector->destroy(&(pVector->data[i]));
+		}
+
 	}
 	
 	free(pVector->data);
