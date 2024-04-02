@@ -220,7 +220,6 @@ Status my_string_push_back(MY_STRING hString, char item)
 {
     My_string* pString = (My_string*)hString;
     int i;
-
       // checks to see if the size of the character exceeds the capacity.
       // if so, double the capacity of the struct, create a new string struct,
       // and then paste values of previous string struct into the new one which
@@ -236,11 +235,9 @@ Status my_string_push_back(MY_STRING hString, char item)
 
         for (i = 0; i < pString->size; i++)
         {
-            printf("Size is: %d\n", pString->size);
-            printf("Capacity is: %d\n", pString->capacity);
+            printf("MAde it here\n");
             temp[i] = pString->data[i];
         }
-
         free(pString->data); // dont forget to free
         pString->data = temp; // temp is a c-string (pointer to beginning of string). data is ALSO a c-string
         pString->capacity *= 2;
@@ -248,6 +245,7 @@ Status my_string_push_back(MY_STRING hString, char item)
 
     pString->data[pString->size] = item;
     pString->size++;
+
     return SUCCESS;
 }
 
@@ -282,20 +280,18 @@ char* my_string_c_str(MY_STRING hString)
 {
     My_string* pString = (My_string*) hString;
 
-    if (pString->size == 0)
+    if (pString->size <= 0)
     {
         return NULL;
     }
-    printf("size within my_string_c_str: %d\n", pString->size);
-    printf("capacity within my_string_c_str: %d\n", pString->capacity);
-    if (my_string_push_back(pString, '\0') == FAILURE)
+    if (my_string_push_back(hString, '\0') == FAILURE)
     {
       printf("Failed to end with null terminator\n");
         return NULL;
     }
 
     pString->size--; // simulates a c string
-    return pString->data; // pString->data is char*
+    return (char*)&(pString->data[0]); // pString->data is char*
 }
 
 
@@ -340,43 +336,105 @@ Boolean my_string_empty(MY_STRING hMy_string)
     return FALSE;
 }
 
-Status my_string_assignment(ITEM phLeft, ITEM hRight)
+Status my_string_assignment2(ITEM* phLeft, ITEM hRight)
 {
-    My_string* pLeft = (My_string*)phLeft;
-    My_string* pRight = (My_string*)hRight;
+    My_string* pRight;
+    My_string* pLeft;
+    char* temp;
 
-    if (pLeft == NULL)
+    if (*phLeft == NULL)
     {
-        pLeft = my_string_init_c_string(my_string_c_str(hRight));
-        if (pLeft == NULL)
+        *phLeft = my_string_init_c_string(my_string_c_str(hRight));
+        if (*phLeft == NULL)
         {
             return FAILURE;
         }
     }
-
     else
     {
-        if (pLeft->capacity <= pRight->size)
+        pLeft = (My_string*) *phLeft;
+        pRight = (My_string*) hRight;
+        if (pRight->size >= pLeft->capacity)
         {
-            char* temp = (char*)malloc(sizeof(char) * pRight->size + 1);
+            temp = (char*)malloc(sizeof(char) * (pRight->size + 1));
             if (temp == NULL)
             {
-                printf("Failed to allocate memory\n");
                 return FAILURE;
             }
             free(pLeft->data);
             pLeft->data = temp;
             pLeft->capacity = pRight->size + 1;
         }
-
-        for (int i = 0; i < pRight->size; i++)
-        {
-            pLeft->data[i] = pRight->data[i];
-        }
-        pLeft->size = pRight->size;
     }
     return SUCCESS;
 }
+
+// May have to make changes and make it so that my_string_assignment
+// copies the phLeft and puts it into hRight
+Status my_string_assignment(ITEM phLeft, ITEM hRight)
+{
+    My_string* pLeft = (My_string*)phLeft;
+    My_string* pRight = (My_string*)hRight;
+
+    // printf("--------------------------------\n");
+    // printf("repLeft is: %s\n", my_string_c_str(phLeft));
+    // printf("repLeft size is: %d\n", my_string_get_size(phLeft));
+    // printf("repLeft capacity is: %d\n", my_string_get_capacity(phLeft));
+    // printf("repRight is: %s\n", my_string_c_str(hRight));
+    // printf("repRight size is: %d\n", my_string_get_size(hRight));
+    // printf("repRight capacity is: %d\n", my_string_get_capacity(hRight));
+    // printf("--------------------------------\n");
+
+    if (phLeft == NULL || hRight == NULL)
+    {
+        return FAILURE; // Ensure both handles are valid
+    }
+
+    // Ensure the capacity of the left string is sufficient to hold the contents of the right string
+    if (pLeft->capacity <= pRight->size)
+    {
+        char* temp = (char*)malloc(sizeof(char) * (pRight->size + 1)); // Allocate memory for the data
+        if (temp == NULL)
+        {
+            printf("Failed to allocate memory\n");
+            return FAILURE; // Return FAILURE on memory allocation failure
+        }
+        for (int i = 0; i < my_string_get_size(pLeft); i++)
+        {
+            temp[i] = pLeft->data[i];
+        }
+        free(pLeft->data);
+        pLeft->data = temp;
+        pLeft->capacity = pRight->capacity; // Update the capacity
+    }
+
+    // Copy the data from the right string to the left string
+    pRight->data = pLeft->data;
+    pRight->size = pLeft->size; // Update the size
+    pRight->capacity = pLeft->capacity;
+    for (int i = 0; i < pRight->size; i++)
+    {
+        if(pRight->data != NULL)
+        {
+            pLeft->data[i] = pRight->data[i];
+        }
+    }
+
+
+    printf("--------------------------------\n");
+    printf("after pLeft is: %s\n", my_string_c_str(pLeft));
+    printf("after pLeft size is: %d\n", my_string_get_size(pLeft));
+    printf("after pLeft capacity is: %d\n", my_string_get_capacity(pLeft));
+    printf("after pRight is: %s\n", my_string_c_str(pRight));
+    printf("after pRight size is: %d\n", my_string_get_size(pRight));
+    printf("after pRight capacity is: %d\n", my_string_get_capacity(pRight));
+    printf("--------------------------------\n");
+
+    return SUCCESS; // Return SUCCESS upon successful completion
+}
+
+
+
 
 MY_STRING my_string_init_copy(MY_STRING hMy_string)
 {

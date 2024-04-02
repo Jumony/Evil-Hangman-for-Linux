@@ -3,6 +3,7 @@
 // words are correctly being placed into the vector
 // Maybe the problem is how these strings are being accessed?
 // Is there something wrong with the given vector code?
+// For some reason, all of the strings reset to size 1 when they enter the dict
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,7 +39,7 @@ int main(int argc, char* argv[])
         printf("Words of length %d : %d\n", i, generic_vector_get_size(dict[i]));
     }
 	printf("\n");
-	
+
     // Destroy
 	for (int i = 0; i < 30; i++)
 	{
@@ -82,13 +83,14 @@ GENERIC_VECTOR* create_dictionary()
 	{
 		if (my_string_get_size(hString) < 30)
 		{
-			if (!generic_vector_push_back(hpVector[my_string_get_size(hString)], hString))
+			printf("string is %s\n", my_string_c_str(hString));
+			if (generic_vector_push_back(hpVector[my_string_get_size(hString)], hString) != SUCCESS)
 			{
 				exit(1);
 			}
 		}
 	}
-	
+
 	// Testing Purposes
 	MY_STRING compare_string = my_string_init_c_string("zyzzyvas");
 	if (my_string_compare(hString, compare_string))
@@ -100,25 +102,7 @@ GENERIC_VECTOR* create_dictionary()
 	my_string_destroy(&compare_string);
 	// Testing Purposes
 
-	my_string_destroy(&hString);
 	fclose(fp);
 
 	return hpVector;
 }
-
-// Status get_word_key_value(MY_STRING current_word_family, MY_STRING new_key, MY_STRING word, char guess)
-// {
-// 	if (my_string_assignment(&new_key, current_word_family) == FAILURE)
-// 	{
-// 		return FAILURE;
-// 	}
-
-// 	for (int i = 0; i < my_string_get_size(word); i++)
-// 	{
-// 		if (tolower(*my_string_at(word, i)) == tolower(guess))
-// 		{
-// 			*my_string_at(new_key, i) = guess;
-// 		}
-// 	}
-// 	return SUCCESS;
-// }
