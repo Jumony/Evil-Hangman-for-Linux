@@ -52,9 +52,10 @@ Status generic_vector_push_back(GENERIC_VECTOR hVector, ITEM hItem)
 	Generic_vector* pVector = (Generic_vector*)hVector;
 	ITEM* temp;
 	int i;
-
+	
 	if (pVector->size >= pVector->capacity) //if there is not enough room then try to make room
 	{
+		printf("pVector->capacity before resize is: %d\n", generic_vector_get_capacity(pVector));
 		temp = (ITEM*)malloc(sizeof(ITEM) * pVector->capacity * 2);
 		if (temp == NULL)
 		{
@@ -71,6 +72,7 @@ Status generic_vector_push_back(GENERIC_VECTOR hVector, ITEM hItem)
 		free(pVector->data);
 		pVector->data = temp;
 		pVector->capacity *= 2;
+		printf("pVector->capacity after resize is: %d\n", generic_vector_get_capacity(pVector));
 	}
 
 	//pVector->data[pVector->size] = hItem; //this is bad

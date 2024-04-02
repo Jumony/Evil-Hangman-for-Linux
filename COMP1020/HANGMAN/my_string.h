@@ -128,7 +128,7 @@
     //  On failure pLeft will be unchanged and a Status of FAILURE will be
     // returned.
     Status my_string_assignment(ITEM phLeft, ITEM hRight);
-
+    Status my_string_assignment2(ITEM* phLeft, ITEM hRight);
     //Precondition; hMy_string is the handle to a valid MY_STRING object.
     //Postcondition: Will return the handle to a valid MY_STRING object that
     //  is a deep copy of the object indicated by hMY_string. This means the
