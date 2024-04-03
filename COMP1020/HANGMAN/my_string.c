@@ -376,14 +376,14 @@ Status my_string_assignment(ITEM phLeft, ITEM hRight)
     My_string* pLeft = (My_string*)phLeft;
     My_string* pRight = (My_string*)hRight;
 
-    // printf("--------------------------------\n");
-    // printf("repLeft is: %s\n", my_string_c_str(phLeft));
-    // printf("repLeft size is: %d\n", my_string_get_size(phLeft));
-    // printf("repLeft capacity is: %d\n", my_string_get_capacity(phLeft));
-    // printf("repRight is: %s\n", my_string_c_str(hRight));
-    // printf("repRight size is: %d\n", my_string_get_size(hRight));
-    // printf("repRight capacity is: %d\n", my_string_get_capacity(hRight));
-    // printf("--------------------------------\n");
+    printf("--------------------------------\n");
+    printf("repLeft is: %s\n", my_string_c_str(phLeft));
+    printf("repLeft size is: %d\n", my_string_get_size(phLeft));
+    printf("repLeft capacity is: %d\n", my_string_get_capacity(phLeft));
+    printf("repRight is: %s\n", my_string_c_str(hRight));
+    printf("repRight size is: %d\n", my_string_get_size(hRight));
+    printf("repRight capacity is: %d\n", my_string_get_capacity(hRight));
+    printf("--------------------------------\n");
 
     if (phLeft == NULL || hRight == NULL)
     {
