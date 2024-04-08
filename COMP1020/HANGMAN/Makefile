@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -g -Wall --std=c99 -fPIC
+CFLAGS = -g -Wall --std=c99
 OBJECTS = main.o my_string.o generic_vector.o
 
 all: string_driver unit_test

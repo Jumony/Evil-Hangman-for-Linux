@@ -84,7 +84,7 @@ GENERIC_VECTOR* create_dictionary()
 		if (my_string_get_size(hString) < 30)
 		{
 			printf("string is %s\n", my_string_c_str(hString));
-			if (generic_vector_push_back(hpVector[my_string_get_size(hString)], hString) != SUCCESS)
+			if (generic_vector_push_back(hpVector[my_string_get_size(hString)], (ITEM)hString) != SUCCESS)
 			{
 				exit(1);
 			}
@@ -102,6 +102,7 @@ GENERIC_VECTOR* create_dictionary()
 	my_string_destroy(&compare_string);
 	// Testing Purposes
 
+	my_string_destroy(&hString);
 	fclose(fp);
 
 	return hpVector;

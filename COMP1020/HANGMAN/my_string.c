@@ -376,11 +376,12 @@ Status my_string_assignment(ITEM phLeft, ITEM hRight)
     My_string* pLeft = (My_string*)phLeft;
     My_string* pRight = (My_string*)hRight;
 
+    // Print debugging information
     printf("--------------------------------\n");
-    printf("repLeft is: %s\n", my_string_c_str(phLeft));
+    printf("repLeft is: %s\n", my_string_c_str(pLeft));
     printf("repLeft size is: %d\n", my_string_get_size(phLeft));
     printf("repLeft capacity is: %d\n", my_string_get_capacity(phLeft));
-    printf("repRight is: %s\n", my_string_c_str(hRight));
+    printf("repRight is: %s\n", my_string_c_str(pRight));
     printf("repRight size is: %d\n", my_string_get_size(hRight));
     printf("repRight capacity is: %d\n", my_string_get_capacity(hRight));
     printf("--------------------------------\n");
@@ -390,48 +391,43 @@ Status my_string_assignment(ITEM phLeft, ITEM hRight)
         return FAILURE; // Ensure both handles are valid
     }
 
-    // Ensure the capacity of the left string is sufficient to hold the contents of the right string
-    if (pLeft->capacity <= pRight->size)
+    // Ensure the capacity of the right string is sufficient to hold the contents of the left string
+    if (pLeft->capacity > pRight->capacity)
     {
-        char* temp = (char*)malloc(sizeof(char) * (pRight->size + 1)); // Allocate memory for the data
+        // Reallocate memory for pRight->data if needed
+        char* temp = (char*)malloc(sizeof(char) * (pLeft->capacity));
         if (temp == NULL)
         {
             printf("Failed to allocate memory\n");
             return FAILURE; // Return FAILURE on memory allocation failure
         }
-        for (int i = 0; i < my_string_get_size(pLeft); i++)
-        {
-            temp[i] = pLeft->data[i];
-        }
-        free(pLeft->data);
-        pLeft->data = temp;
-        pLeft->capacity = pRight->capacity; // Update the capacity
+        free(pRight->data); // Free the existing data
+        pRight->data = temp;
+        pRight->capacity = pLeft->capacity; // Update the capacity
     }
 
-    // Copy the data from the right string to the left string
-    pRight->data = pLeft->data;
-    pRight->size = pLeft->size; // Update the size
-    pRight->capacity = pLeft->capacity;
-    for (int i = 0; i < pRight->size; i++)
+    // Copy the data from the left string to the right string
+    for (int i = 0; i < pLeft->size; i++)
     {
-        if(pRight->data != NULL)
-        {
-            pLeft->data[i] = pRight->data[i];
-        }
+        pRight->data[i] = pLeft->data[i];
     }
 
+    // Update the size of the right string
+    pRight->size = pLeft->size;
 
-    printf("--------------------------------\n");
-    printf("after pLeft is: %s\n", my_string_c_str(pLeft));
-    printf("after pLeft size is: %d\n", my_string_get_size(pLeft));
-    printf("after pLeft capacity is: %d\n", my_string_get_capacity(pLeft));
-    printf("after pRight is: %s\n", my_string_c_str(pRight));
-    printf("after pRight size is: %d\n", my_string_get_size(pRight));
-    printf("after pRight capacity is: %d\n", my_string_get_capacity(pRight));
-    printf("--------------------------------\n");
+    // Print debugging information
+    // printf("--------------------------------\n");
+    // printf("after pLeft is: %s\n", my_string_c_str(pLeft));
+    // printf("after pLeft size is: %d\n", my_string_get_size(pLeft));
+    // printf("after pLeft capacity is: %d\n", my_string_get_capacity(pLeft));
+    // printf("after pRight is: %s\n", my_string_c_str(pRight));
+    // printf("after pRight size is: %d\n", my_string_get_size(pRight));
+    // printf("after pRight capacity is: %d\n", my_string_get_capacity(pRight));
+    // printf("--------------------------------\n");
 
     return SUCCESS; // Return SUCCESS upon successful completion
 }
+
 
 
 
