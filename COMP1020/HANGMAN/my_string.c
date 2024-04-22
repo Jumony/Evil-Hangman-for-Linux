@@ -1,16 +1,37 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "my_string.h"
-#include <ctype.h>
+#include <stdio.h> // include directive
+#include <stdlib.h> // include directive
+#include <ctype.h> // include directive
+#include "my_string.h" // include header
 
-struct my_string
+struct my_string // declare known type of structure
 {
-    char* data;
-    int size;
-    int capacity;
+    int size; // the number of characters currently in the object
+    int capacity; // total capacity of the object
+    char* data; // pointer to the object -malloc starts here
 };
-typedef struct my_string My_string;
+typedef struct my_string My_string; // define type
 
+Boolean check_if_used(MY_STRING guess_list, char c) {
+
+    My_string* pMy_string = (My_string*)guess_list;
+    int i;
+
+    for (i = 0; i < my_string_get_size(guess_list); i++) {
+
+        if (pMy_string->data[i] == c) {
+
+            printf("You have already guessed that letter! Try again...\n");
+            return TRUE;
+
+        }
+
+    }
+
+    return FALSE;
+
+}
+
+// SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 // IMPORTANT COMMENT!!!!
 // Most of these functions define My_string* pString = (My_string*) hMyString for several reasons:
 // 1. typecast so that it is way easier to reference the inputted parameter
@@ -42,7 +63,7 @@ MY_STRING my_string_init_default()
     return pString;
 }
 
-
+//SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 void my_string_destroy(ITEM* phItem)
 {
     My_string* pMy_string = (My_string*) *phItem; // cast to the known type
@@ -51,19 +72,7 @@ void my_string_destroy(ITEM* phItem)
     *phItem = NULL; // and set it to NULL
 }
 
-
-/*
-  void my_string_destroy2(void* phMy_string)
-{
-  // Does not work because we are supposed to pass in a pointer to a void* which would allow us to modify the referenced parameter.
-  // Since we want to modify pString, we need to pass in a pointer to a void*
-  // IN SUMMARY: we are not even working with the referenced parameter. This is currently pass by value and not pass by reference. 
-  My_string* pString = (My_string*) phMy_string;
-    free(pString->data);
-    free(pString);
-    *phMy_string = NULL;
-}
-*/
+//SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 MY_STRING my_string_init_c_string(const char* c_string)
 {
     //Finds length of string
@@ -96,6 +105,44 @@ MY_STRING my_string_init_c_string(const char* c_string)
     return pString;
 }
 
+// SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+int my_string_get_capacity(MY_STRING hMy_string)
+{
+    My_string* pString = (My_string*) hMy_string;
+    return pString->capacity;
+}
+
+// SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+int my_string_get_size(MY_STRING hMy_string)
+{   
+    My_string* pString = (My_string*) hMy_string;
+    return pString->size;
+}
+
+int my_string_compare(MY_STRING hLeft_string, MY_STRING hRight_string) {
+
+    My_string* pLeft_string = (My_string*)hLeft_string;
+    My_string* pRight_string = (My_string*)hRight_string;
+    int i;
+
+    for (i = 0; i < pLeft_string->size && i < pRight_string->size; i++) {
+
+        if (pLeft_string->data[i] < pRight_string->data[i])
+        {
+            return -1;
+            //break;
+        }
+        else if (pLeft_string->data[i] > pRight_string->data[i]) {
+
+            return 1;
+            // break
+        }
+
+    }
+    return 0;
+}
+
+//SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 Status my_string_extraction(MY_STRING hMy_string, FILE* fp)
 {
     My_string* pString = (My_string*) hMy_string;
@@ -157,6 +204,7 @@ Status my_string_extraction(MY_STRING hMy_string, FILE* fp)
     return SUCCESS;
 }
 
+// SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 // The reason the parameter is a void* and not a void** is because
 // we simply want to modify the values within the struct and not the
 // struct itself. Making this into a void** is possible but then we
@@ -182,40 +230,7 @@ Status my_string_insertion(MY_STRING hMy_string, FILE* fp)
     return SUCCESS;
 }
 
-int my_string_get_capacity(MY_STRING hMy_string)
-{
-    My_string* pString = (My_string*) hMy_string;
-    return pString->capacity;
-}
-
-int my_string_get_size(MY_STRING hMy_string)
-{
-  My_string* pString = (My_string*) hMy_string;
-  return pString->size;
-}
-
-int my_string_compare(MY_STRING hLeft_string, MY_STRING hRight_string)
-{
-    My_string* pLeftString = (My_string*) hLeft_string;
-    My_string* pRightString = (My_string*) hRight_string;
-
-    int i = 0;
-
-    while (i < my_string_get_size(pLeftString) && i < my_string_get_size(pRightString) && pLeftString->data[i] == pRightString->data[i])
-    {
-        i++;
-    }
-    if (i < my_string_get_size(pLeftString) && i < my_string_get_size(pRightString) && pLeftString->data[i] != pRightString->data[i])
-    {
-        return pLeftString->data[i] - pRightString->data[i];
-    }
-    else if (i == my_string_get_size(pLeftString) && i == my_string_get_size(pRightString))
-    {
-        return 0;
-    }
-    return pLeftString->size - pRightString->size;
-}
-
+// SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 Status my_string_push_back(MY_STRING hString, char item)
 {
     My_string* pString = (My_string*)hString;
@@ -235,7 +250,6 @@ Status my_string_push_back(MY_STRING hString, char item)
 
         for (i = 0; i < pString->size; i++)
         {
-            printf("MAde it here\n");
             temp[i] = pString->data[i];
         }
         free(pString->data); // dont forget to free
@@ -249,7 +263,7 @@ Status my_string_push_back(MY_STRING hString, char item)
     return SUCCESS;
 }
 
-
+// SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 // Should add an automatic resize function soon.
 // Resize by 1/2 after size is 1/4 of capacity
 Status my_string_pop_back(MY_STRING hString)
@@ -264,7 +278,7 @@ Status my_string_pop_back(MY_STRING hString)
     return SUCCESS;
 }
 
-//
+// SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 char* my_string_at(MY_STRING hString, int index)
 {
     My_string* pString = (My_string*) hString;
@@ -276,6 +290,7 @@ char* my_string_at(MY_STRING hString, int index)
     return &(pString->data[index]);
 }
 
+// SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 char* my_string_c_str(MY_STRING hString)
 {
     My_string* pString = (My_string*) hString;
@@ -294,8 +309,7 @@ char* my_string_c_str(MY_STRING hString)
     return (char*)&(pString->data[0]); // pString->data is char*
 }
 
-
-
+// SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 Status my_string_concat(MY_STRING hResult, MY_STRING hAppend)
 {
     My_string* pResult = (My_string*) hResult;
@@ -325,6 +339,7 @@ Status my_string_concat(MY_STRING hResult, MY_STRING hAppend)
     return SUCCESS;
 }
 
+// SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 Boolean my_string_empty(MY_STRING hMy_string)
 {
     My_string* pString = (My_string*) hMy_string;
@@ -336,149 +351,61 @@ Boolean my_string_empty(MY_STRING hMy_string)
     return FALSE;
 }
 
-Status my_string_assignment2(ITEM* phLeft, ITEM hRight)
+// SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+// May have to make changes and make it so that my_string_assignment
+// copies the phLeft and puts it into hRight
+// For some reason, the documentation wants us to use
+//  MY_STRING hLeft even though we are supposedly not supposed to do
+//  pass by reference...
+Status my_string_assignment(MY_STRING* phLeft, MY_STRING hRight)
 {
-    My_string* pRight;
-    My_string* pLeft;
-    char* temp;
+    My_string* pLeft = (My_string*)*phLeft;
+    My_string* pRight = (My_string*)hRight;
 
-    if (*phLeft == NULL)
+    if (pLeft == NULL)
     {
-        *phLeft = my_string_init_c_string(my_string_c_str(hRight));
-        if (*phLeft == NULL)
-        {
-            return FAILURE;
-        }
+        char* temp = my_string_c_str(hRight);
+        pLeft = my_string_init_c_string(temp);
+        *phLeft = pLeft;
+        return SUCCESS;
     }
-    else
+
+    if (pLeft != NULL)
     {
-        pLeft = (My_string*) *phLeft;
-        pRight = (My_string*) hRight;
-        if (pRight->size >= pLeft->capacity)
+        pLeft->size = 0;
+        for (int i = 0; i < pRight->size + 1; i++)
         {
-            temp = (char*)malloc(sizeof(char) * (pRight->size + 1));
-            if (temp == NULL)
-            {
-                return FAILURE;
-            }
-            free(pLeft->data);
-            pLeft->data = temp;
-            pLeft->capacity = pRight->size + 1;
+            my_string_push_back(pLeft, pRight->data[i]);
+        }
+
+        *phLeft = pLeft;
+        return SUCCESS;
+    }
+    return FAILURE;
+
+}
+
+Status get_word_key_value(MY_STRING current_key, MY_STRING new_key, MY_STRING word, char guess) {
+    char letter;
+    // Clear out new_key
+    while (!my_string_empty(new_key))
+        my_string_pop_back(new_key);
+        
+    // Iterate over each character in 'word' and determine whether to use 'guess' or the corresponding character from 'current_key'
+    for (int i = 0; i < my_string_get_size(word); i++) 
+    {   
+        // If guess is correct, push character onto new_key
+        if (*my_string_at(word, i) == guess)
+            letter = guess;
+
+        // If guess is wrong, push a dash to represent a blank character
+        else
+            letter = *my_string_at(current_key, i);
+
+        // Push the determined character onto the new_key string
+        if (!my_string_push_back(new_key, letter)) {
+            return FAILURE; // Return FAILURE if the push operation fails
         }
     }
     return SUCCESS;
-}
-
-// May have to make changes and make it so that my_string_assignment
-// copies the phLeft and puts it into hRight
-Status my_string_assignment(ITEM phLeft, ITEM hRight)
-{
-    My_string* pLeft = (My_string*)phLeft;
-    My_string* pRight = (My_string*)hRight;
-
-    // Print debugging information
-    printf("--------------------------------\n");
-    printf("repLeft is: %s\n", my_string_c_str(pLeft));
-    printf("repLeft size is: %d\n", my_string_get_size(phLeft));
-    printf("repLeft capacity is: %d\n", my_string_get_capacity(phLeft));
-    printf("repRight is: %s\n", my_string_c_str(pRight));
-    printf("repRight size is: %d\n", my_string_get_size(hRight));
-    printf("repRight capacity is: %d\n", my_string_get_capacity(hRight));
-    printf("--------------------------------\n");
-
-    if (phLeft == NULL || hRight == NULL)
-    {
-        return FAILURE; // Ensure both handles are valid
-    }
-
-    // Ensure the capacity of the right string is sufficient to hold the contents of the left string
-    if (pLeft->capacity > pRight->capacity)
-    {
-        // Reallocate memory for pRight->data if needed
-        char* temp = (char*)malloc(sizeof(char) * (pLeft->capacity));
-        if (temp == NULL)
-        {
-            printf("Failed to allocate memory\n");
-            return FAILURE; // Return FAILURE on memory allocation failure
-        }
-        free(pRight->data); // Free the existing data
-        pRight->data = temp;
-        pRight->capacity = pLeft->capacity; // Update the capacity
-    }
-
-    // Copy the data from the left string to the right string
-    for (int i = 0; i < pLeft->size; i++)
-    {
-        pRight->data[i] = pLeft->data[i];
-    }
-
-    // Update the size of the right string
-    pRight->size = pLeft->size;
-
-    // Print debugging information
-    // printf("--------------------------------\n");
-    // printf("after pLeft is: %s\n", my_string_c_str(pLeft));
-    // printf("after pLeft size is: %d\n", my_string_get_size(pLeft));
-    // printf("after pLeft capacity is: %d\n", my_string_get_capacity(pLeft));
-    // printf("after pRight is: %s\n", my_string_c_str(pRight));
-    // printf("after pRight size is: %d\n", my_string_get_size(pRight));
-    // printf("after pRight capacity is: %d\n", my_string_get_capacity(pRight));
-    // printf("--------------------------------\n");
-
-    return SUCCESS; // Return SUCCESS upon successful completion
-}
-
-
-
-
-
-MY_STRING my_string_init_copy(MY_STRING hMy_string)
-{
-    My_string* pMy_string = (My_string*)hMy_string;
-    My_string* pNewString = (My_string*)malloc(sizeof(My_string));
-    if (pNewString == NULL)
-    {
-        printf("Failed to allocate memory\n");
-        return NULL;
-    }
-
-    // Copies attributes of hMy_string to pNewString
-    pNewString->capacity = pMy_string->capacity;
-    pNewString->size = pMy_string->size;
-    pNewString->data = (char*)malloc(sizeof(char) * pMy_string->capacity);
-    
-    if (pNewString->data == NULL)
-    {
-        free(pNewString);
-        printf("Failed to allocate memory\n");
-        return NULL;
-    }
-
-    for (int i = 0; i < pMy_string->size; i++)
-    {
-        pNewString->data[i] = pMy_string->data[i];
-    }
-    return pNewString;
-}
-
-void my_string_swap(MY_STRING hLeft, MY_STRING hRight)
-{
-    My_string* pLeft = (My_string*)hLeft;
-    My_string* pRight = (My_string*)hRight;
-
-    int pLSize = pLeft->size;
-    int pLCapacity = pLeft->capacity;
-    char* pLData = pLeft->data;
-
-    int pRSize = pRight->size;
-    int pRCapacity = pRight->capacity;
-    char* pRData = pRight->data;
-
-    pLeft->size = pRSize;
-    pLeft->capacity = pRCapacity;
-    pLeft->data = pRData;
-
-    pRight->size = pLSize;
-    pRight->capacity = pLCapacity;
-    pRight->data = pLData;
 }

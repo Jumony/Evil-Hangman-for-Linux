@@ -1,30 +1,31 @@
 CC = gcc
 CFLAGS = -g -Wall --std=c99
-OBJECTS = main.o my_string.o generic_vector.o
-
-all: string_driver unit_test
-
-unit_test: unit_test.o my_string.o test_def.o
-	$(CC) $(CFLAGS) unit_test.o my_string.o test_def.o -o unit_test
+OBJECTS = main.o my_string.o generic_vector.o avl_tree.o
+TEST_OBJECTS = unit_test.o test_def.o my_string.o
 
 string_driver: $(OBJECTS)
-	$(CC) $(CFLAGS) $(OBJECTS) -o string_driver
+	$(CC) $(CFLAGS) -o string_driver $(OBJECTS)
 
-unit_test.o: unit_test.c my_string.h unit_test.h
-	$(CC) $(CFLAGS) -c unit_test.c -o unit_test.o
-
-test_def.o: test_def.c my_string.h unit_test.h
-	$(CC) $(CFLAGS) -c test_def.c -o test_def.o
-
-main.o: main.c my_string.h status.h generic_vector.h
+main.o: main.c
 	$(CC) $(CFLAGS) -c main.c -o main.o
 
-my_string.o: my_string.c my_string.h status.h
+my_string.o: my_string.c
 	$(CC) $(CFLAGS) -c my_string.c -o my_string.o
 
-generic_vector.o: generic_vector.c generic_vector.h generic.h
+generic_vector.o: generic_vector.c
 	$(CC) $(CFLAGS) -c generic_vector.c -o generic_vector.o
 
+avl_tree.o: avl_tree.c
+	$(CC) $(CFLAGS) -c avl_tree.c -o avl_tree.o
+
+unit_test: my_string.o unit_test.o test_def.o
+	$(CC) $(CFLAGS) -o unit_test unit_test.o test_def.o my_string.o
+
+unit_test.o: unit_test.c
+	$(CC) $(CFLAGS) -c unit_test.c -o unit_test.o
+
+test_def.o: test_def.c
+	$(CC) $(CFLAGS) -c test_def.c -o test_def.o
+
 clean:
-	rm string_driver
-	rm $(OBJECTS)
+	rm game $(OBJECTS) $(TEST_OBJECTS)
