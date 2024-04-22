@@ -19,6 +19,7 @@ struct node {
     Node* right;
     MY_STRING key; // ie ---f----f--f
     GENERIC_VECTOR data; // actual dictionary words
+    int height;
 
 };
 
@@ -55,6 +56,9 @@ void avl_tree_destroy(TREE* phAVL_tree);
 //  into tree according to the structure of an AVL tree. If a key
 //  already exists, then push the value into the node with the same key
 Status avl_tree_push(TREE hAVL_tree, MY_STRING key, MY_STRING value);
+
+Node* createNode(MY_STRING key, MY_STRING value);
+Node* insert(Node* node, MY_STRING key, MY_STRING value);
 
 // Precondition: pNode is the address to a Node object
 // Postcondition: Successfully destroys nodes in a
