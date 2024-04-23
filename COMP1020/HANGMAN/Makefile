@@ -1,7 +1,8 @@
 CC = gcc
 CFLAGS = -g -Wall --std=c99
-OBJECTS = main.o my_string.o generic_vector.o avl_tree.o
+OBJECTS = main.o my_string.o generic_vector.o avl_tree.o hangman.o
 TEST_OBJECTS = unit_test.o test_def.o my_string.o
+HEADERS = hangman.h
 
 string_driver: $(OBJECTS)
 	$(CC) $(CFLAGS) -o string_driver $(OBJECTS)
@@ -18,6 +19,9 @@ generic_vector.o: generic_vector.c
 avl_tree.o: avl_tree.c
 	$(CC) $(CFLAGS) -c avl_tree.c -o avl_tree.o
 
+hangman.o: hangman.c $(HEADERS)
+	$(CC) $(CFLAGS) -c hangman.c -o hangman.o
+
 unit_test: my_string.o unit_test.o test_def.o
 	$(CC) $(CFLAGS) -o unit_test unit_test.o test_def.o my_string.o
 
@@ -28,4 +32,4 @@ test_def.o: test_def.c
 	$(CC) $(CFLAGS) -c test_def.c -o test_def.o
 
 clean:
-	rm game $(OBJECTS) $(TEST_OBJECTS)
+	rm string_driver unit_test $(OBJECTS) $(TEST_OBJECTS)
