@@ -110,7 +110,6 @@ int main(int argc, char* argv[])
             my_string_push_back(letters_guessed, ',');
             my_string_push_back(letters_guessed, ' ');
 
-            // ISSUE MIGHT BE WITH PUSHBACK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             clear_terminal();
 
             if (running_total) 
@@ -146,8 +145,10 @@ int main(int argc, char* argv[])
             // Notice that get_largest_family has already been called before this meaning that this is actually one step ahead
             //  which will allow for a more difficult game
             // ITS ALSO IMPORTANT TO NOTE THAT WE'VE ALREADY CHOSEN THE NEW LARGEST FAMILY. THAT IS WHAT WE ARE COMPARING WORD_KEY TO
-            printf("dictionary[word_length], 0 is %s\n", my_string_c_str(generic_vector_at(dictionary[word_length], 0)));
             get_word_key_value(current_key, word_key, generic_vector_at(dictionary[word_length], 0), current_guess);
+
+            if (running_total)
+                printf("dictionary[word_length], 0 is %s\n", my_string_c_str(generic_vector_at(dictionary[word_length], 0)));
 
             // If current key matches the word_key (which represents a possible option), then that means the guessed character is not present in the word 
             // If they are not equal, it implies that the player has trapped the computer and the computer must reveal a letter
@@ -316,8 +317,12 @@ int ask_word_length() {
     scanf("%d", &d);
     clear_keyboard_buffer();
 
-    while (d <= 2 || d >= MAX_SIZE)
+    while (d <= 2 || d >= MAX_SIZE || d == 27 || d == 26 || d == 25 || d == 23)
     {
+        if (d == 27 || d == 26 || d == 25 || d == 23)
+        {
+            printf("No words in my dictionary are %d letters long\n\n", d);
+        }
         if (d <= 2)
             printf("\nNo words exist with a size less than two\n\n");
         else if(d >= MAX_SIZE) 
@@ -375,6 +380,52 @@ void clear_keyboard_buffer()
         scanf("%c", &c);
     } while (c != '\n');
     return;
+}
+
+// Completely unnecessary color step
+void color_black()
+{
+    printf("\033[0;30m");
+}
+
+void color_red()
+{
+    printf("\033[1;31m");
+}
+
+void color_green()
+{
+    printf("\033[0;32m");
+}
+
+void color_yellow() 
+{
+    printf("\033[1;33m");
+}
+
+void color_blue()
+{
+    printf("\033[0;34m");
+}
+
+void color_purple()
+{
+    printf("\033[0;35m");
+}
+
+void color_cyan()
+{
+    printf("\033[0;36m");
+}
+
+void color_white()
+{
+    printf("\033[0;37m");
+}
+
+void color_reset() 
+{
+    printf("\033[0m");
 }
 
 void clear_terminal() 

@@ -207,8 +207,7 @@ void avl_tree_destroy_recursive_helper(Node* pNode)
     free(pNode);
 }
 
-GENERIC_VECTOR get_largest_family(TREE hAVL_tree, int running_total) 
-{
+GENERIC_VECTOR get_largest_family(TREE hAVL_tree, int running_total) {
     AVL_tree* pMy_tree = (AVL_tree*)hAVL_tree;
     GENERIC_VECTOR largest_family = NULL;
     GENERIC_VECTOR temp;
@@ -216,61 +215,61 @@ GENERIC_VECTOR get_largest_family(TREE hAVL_tree, int running_total)
     temp = get_largest_family_helper(pMy_tree->root, running_total);
     largest_family = generic_vector_init_default((void*)my_string_assignment, my_string_destroy);
 
-    for (int i = 0; i < generic_vector_get_size(temp); i++) 
+    for (int i = 0; i < generic_vector_get_size(temp); i++)
         generic_vector_push_back(largest_family, generic_vector_at(temp, i));
+
+    generic_vector_destroy(&temp); // Deallocate the temporary vector
 
     return largest_family;
 }
 
-GENERIC_VECTOR get_largest_family_helper(Node* root, int running_total) 
-{
+GENERIC_VECTOR get_largest_family_helper(Node* root, int running_total) {
     GENERIC_VECTOR largest_family = NULL;
     GENERIC_VECTOR temp;
     MY_STRING largest_key = NULL;
 
-    if (root != NULL) 
-    {
-        if (root->left != NULL) 
-        {
+    if (root != NULL) {
+        if (root->left != NULL) {
             temp = get_largest_family_helper(root->left, running_total);
             if (largest_family == NULL || (generic_vector_get_size(temp) > generic_vector_get_size(largest_family)) ||
-                (generic_vector_get_size(temp) == generic_vector_get_size(largest_family) && my_string_compare(root->left->key, largest_key) < 0)) 
-                {
+                (generic_vector_get_size(temp) == generic_vector_get_size(largest_family) && my_string_compare(root->left->key, largest_key) < 0)) {
                 if (largest_family != NULL)
-                    generic_vector_destroy(&largest_family);
-                largest_family = temp;
+                    generic_vector_destroy(&largest_family); // Deallocate the previous largest_family
+                largest_family = generic_vector_init_default((void*)my_string_assignment, my_string_destroy);
+                for (int i = 0; i < generic_vector_get_size(temp); i++)
+                    generic_vector_push_back(largest_family, generic_vector_at(temp, i));
                 largest_key = root->left->key;
             }
+            generic_vector_destroy(&temp); // Deallocate the temporary vector
         }
 
-        if (root->right != NULL) 
-        {
+        if (root->right != NULL) {
             temp = get_largest_family_helper(root->right, running_total);
             if (largest_family == NULL || (generic_vector_get_size(temp) > generic_vector_get_size(largest_family)) ||
-                (generic_vector_get_size(temp) == generic_vector_get_size(largest_family) && my_string_compare(root->right->key, largest_key) < 0)) 
-                {
-                if (largest_family != NULL) 
-                    generic_vector_destroy(&largest_family);
-                largest_family = temp;
+                (generic_vector_get_size(temp) == generic_vector_get_size(largest_family) && my_string_compare(root->right->key, largest_key) < 0)) {
+                if (largest_family != NULL)
+                    generic_vector_destroy(&largest_family); // Deallocate the previous largest_family
+                largest_family = generic_vector_init_default((void*)my_string_assignment, my_string_destroy);
+                for (int i = 0; i < generic_vector_get_size(temp); i++)
+                    generic_vector_push_back(largest_family, generic_vector_at(temp, i));
                 largest_key = root->right->key;
             }
+            generic_vector_destroy(&temp); // Deallocate the temporary vector
         }
 
         temp = root->data;
         if (largest_family == NULL || (generic_vector_get_size(temp) > generic_vector_get_size(largest_family)) ||
-            (generic_vector_get_size(temp) == generic_vector_get_size(largest_family) && my_string_compare(root->key, largest_key) < 0)) 
-            {
-            if (largest_family != NULL) 
-                generic_vector_destroy(&largest_family);
+            (generic_vector_get_size(temp) == generic_vector_get_size(largest_family) && my_string_compare(root->key, largest_key) < 0)) {
+            if (largest_family != NULL)
+                generic_vector_destroy(&largest_family); // Deallocate the previous largest_family
             largest_family = generic_vector_init_default((void*)my_string_assignment, my_string_destroy);
-            for (int i = 0; i < generic_vector_get_size(temp); i++) 
+            for (int i = 0; i < generic_vector_get_size(temp); i++)
                 generic_vector_push_back(largest_family, generic_vector_at(temp, i));
             largest_key = root->key;
         }
     }
 
-    if (running_total && root != NULL) 
-    {
+    if (running_total && root != NULL) {
         my_string_insertion(root->key, stdout);
         printf(" %d\n", generic_vector_get_size(root->data));
     }
