@@ -15,6 +15,9 @@ void color_white();
 void color_reset();
 
 void print_scroll();
+void quit_game();
+void play_game();
+void print_intro();
 
 GENERIC_VECTOR* create_dictionary();
 Boolean continue_game();

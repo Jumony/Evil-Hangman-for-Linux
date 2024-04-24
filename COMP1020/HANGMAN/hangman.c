@@ -86,12 +86,16 @@ Boolean remaining_words() {
 
     while (!isalpha(c))
     {
+        color_red();
         printf("%c is not a valid letter\n", c);
+        color_reset();
         return remaining_words();
     }
     while ((isalpha(c) && c != 'y' && c!= 'n'))
     {
+        color_red();
         printf("Please enter a (y)es or (n)o\n");
+        color_reset();
         return remaining_words();
     }
     if (c == 'y') 
@@ -114,12 +118,24 @@ int ask_word_length() {
     {
         if (d == 27 || d == 26 || d == 25 || d == 23)
         {
+            color_red();
             printf("No words in my dictionary are %d letters long\n\n", d);
+            color_reset();
         }
         if (d <= 2)
+        {
+            color_red();
             printf("\nNo words exist with a size less than two\n\n");
+            color_reset();
+        }
+
         else if(d >= MAX_SIZE) 
+        {
+            color_red();
             printf("\nNo words exist with a size greater than thirty\n\n");
+            color_reset();
+        }
+
 
         printf("How many characters do you want the word to be? ");
         scanf("%d", &d);
@@ -141,9 +157,18 @@ int ask_number_of_guesses()
         clear_keyboard_buffer();
 
         if (d <= 0)
+        {
+            color_red();
             printf("\nMust have more than one guess...\n\n");
+            color_reset();
+        }
+
         else if (d > 26)
+        {
+            color_red();
             printf("\nThat's more guesses than the alphabet...\n\n");
+            color_reset();
+        }
     }
     return d;
 }
@@ -160,7 +185,9 @@ int initial_play_prompt()
         
         if (input <= 0 || input > 2)
         {
+            color_red();
             printf("That is not a valid answer. Please try again!\n");
+            color_reset();
         }
     }
     return input;
@@ -239,43 +266,102 @@ void color_reset()
     printf("\033[0m");
 }
 
+void print_intro()
+{
+    char ascii_art[] =
+" __| |____________________________________________| |__\n"
+"(__   ____________________________________________   __)\n"
+"   | |                                            | |\n"
+"   | |              Evil Hangman                  | |\n"
+"   | |        Programmed by Tommy Tran            | |\n"
+"   | |        UMass Lowell Computing II           | |\n"
+"   | |                                            | |\n"
+"   | |ASCII art not mine                          | |\n"
+" __| |____________________________________________| |__\n"
+"(__   ____________________________________________   __)\n"
+"   | |                                            | |\n";
+
+    printf("%s", ascii_art);
+}
+
 void print_scroll()
 {
-    char ascii_art[] = "   ______________________________\n"
-                       " / \\                             \\.\n"
-                       "|   |                            |\n"
-                       " \\_ |                            |\n"
-                       "    |   TOMMY'S EVIL HANGMAN     |\n"
-                       "    |                            |\n"
-                       "    |   Welcome to Hangman! I    |\n"
-                       "    |   am your enemy and you    |\n"
-                       "    |   will attempt to guess    |\n"
-                       "    |   my word.                 |\n"
-                       "    |                            |\n"
-                       "    |   Please do not listen to  |\n"
-                       "    |   whatever my creator      |\n"
-                       "    |   Tommy has to say about   |\n"
-                       "    |   me. I am actually        |\n"
-                       "    |   really nice...            |\n"
-                       "    |                            |\n"
-                       "    |   In fact, I'll even let   |\n"
-                       "    |   you choose how many      |\n"
-                       "    |   letters and guesses      |\n"
-                       "    |   you want to play with!   |\n"
-                       "    |                            |\n"
-                       "    |  Sounds easy enough right? |\n"
-                       "    |  Lets get started then!    |\n"
-                       "    |   _________________________|___\n"
-                       "    |  /                            /.\n"
-                       "    \\_/dc__________________________/\n";
+    char ascii_art[] = "       ______________________________\n"
+                       "     / \\                             \\.\n"
+                       "    |   |                            |\n"
+                       "     \\_ |                            |\n"
+                       "        |   TOMMY'S EVIL HANGMAN     |\n"
+                       "        |                            |\n"
+                       "        |   Welcome to Hangman! I    |\n"
+                       "        |   am your enemy and you    |\n"
+                       "        |   will attempt to guess    |\n"
+                       "        |   my word.                 |\n"
+                       "        |                            |\n"
+                       "        |   Please do not listen to  |\n"
+                       "        |   whatever my creator      |\n"
+                       "        |   Tommy has to say about   |\n"
+                       "        |   me. I am actually        |\n"
+                       "        |   really nice...           |\n"
+                       "        |                            |\n"
+                       "        |   In fact, I'll even let   |\n"
+                       "        |   you choose how many      |\n"
+                       "        |   letters and guesses      |\n"
+                       "        |   you want to play with!   |\n"
+                       "        |                            |\n"
+                       "        |  Sounds easy enough right? |\n"
+                       "        |  Lets get started then!    |\n"
+                       "        |   _________________________|___\n"
+                       "        |  /                            /.\n"
+                       "        \\_/dc__________________________/\n";
     
-    for (int i = 0; ascii_art[i] != '\0'; i++) {
-        putchar(ascii_art[i]);
-        fflush(stdout);  // Ensure the character is printed immediately
+    // for (int i = 0; ascii_art[i] != '\0'; i++) {
+    //     putchar(ascii_art[i]);
+    //     fflush(stdout);  // Ensure the character is printed immediately
         
-        // Adjust the sleep duration to change the speed of printing
-        usleep(10000);  // Sleep for 5000 microseconds (5 milliseconds)
+    //     // Adjust the sleep duration to change the speed of printing
+    //     usleep(5000);  // Sleep for 10000 microseconds (10 milliseconds)
+    // }
+    printf("%s", ascii_art);
+}
+
+void play_game()
+{
+    color_red();
+    char play_message[] = "Im glad you've chosen to play...";
+    for (int i = 0; play_message[i] != '\0'; i++)
+    {
+        putchar(play_message[i]);
+        fflush(stdout);
+
+        usleep(12500);
     }
+    color_reset();
+    sleep(1);
+}
+void quit_game()
+{
+    color_red();
+    char quit_message[] = "Humans fail to impress me once again... \n";
+    char quit_message2[] = "Hasta la vista";
+
+    for (int i = 0; quit_message[i] != '\0'; i++)
+    {
+        putchar(quit_message[i]);
+        fflush(stdout);
+
+        usleep(12500);
+    }
+    sleep(2);
+
+    for (int i = 0; quit_message2[i] != '\0'; i++)
+    {
+        putchar(quit_message2[i]);
+        fflush(stdout);
+
+        usleep(15000);
+    }
+    sleep(2);
+    color_reset();
 }
 void clear_terminal() 
 {

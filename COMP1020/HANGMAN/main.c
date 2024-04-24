@@ -59,11 +59,16 @@
 int main(int argc, char* argv[]) 
 {
     clear_terminal();
+    print_intro();
+        printf("\n______________________________________\n");
     print_scroll();
     if (initial_play_prompt() == 2)
     {
+        quit_game();
         exit(0);
     }
+    else
+        play_game();
     do {
         GENERIC_VECTOR* dictionary = create_dictionary();
         TREE hTree = avl_tree_init_default();
@@ -189,8 +194,10 @@ int main(int argc, char* argv[])
             {
                 if (my_string_compare(generic_vector_at(dictionary[word_length], 0), current_key) == 0)
                 {
+                    color_green();
                     printf("You win!\nThe word was: ");
                     my_string_insertion(generic_vector_at(dictionary[word_length], 0), stdout);
+                    color_reset();
                     printf("\n\n");
                     break;
                 }
