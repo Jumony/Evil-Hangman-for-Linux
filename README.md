@@ -2,6 +2,7 @@
 Evil Hangman is a challenging word-guessing game written in C where the computer constantly evades the player's guesses by dynamically changing its answers.
 It utilizes a handwritten string data type and implements an AVL Tree to efficiently manage and update possible word choices, ensuring the computer always selects the word that best avoids the player's guesses.
 After each guess, the computer traverses the tree to identify the word family with the most remaining words, stored in an Associative Array, maximizing its evasion strategy.
+Built in Spring 2024 UMass Lowell Computing II Lab
 
   ## What I learned:
   - **Memory Management**: Understanding how to allocate and deallocate memory in C efficiently.
